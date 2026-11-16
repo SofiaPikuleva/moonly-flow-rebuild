@@ -1,0 +1,17 @@
+{
+  "flows": [
+    { "channel": "Meta", "headline": "Your future husband is already written in the stars", "paywall_opens_on": "Your Soulmate Reading is ready", "note": "Build healthy relationships arrives ticked" },
+    { "channel": "Meta", "headline": "Your phone now has a built-in astrologer", "paywall_opens_on": "Your personal astrologer, 24/7", "note": "Emotional well-being arrives ticked" },
+    { "channel": "Meta", "headline": "The cards already know what you’re going through", "paywall_opens_on": "Your daily card is waiting", "note": "Motivation & confidence arrives ticked" }
+  ],
+  "prices": { "yearly": "$59.99", "monthly": "$9.99", "trial": "none", "source": "US App Store listing, In-App Purchases (Annual Pro Subscription, Monthly Subscription)" },
+  "today": { "text": "Your Soulmate Reading ad, your astrologer ad and your tarot ad all open the same hello.moonly.app page", "source": "our_pass" },
+  "asks": ["What would you like to Transform?", "How are you feeling right now?", "What’s your Birthdate?"],
+  "ideas": [
+    { "n": 1, "title": "Name their goal in the Plus headline", "screen": "Plus", "outcome": "CR +15–20%" },
+    { "n": 2, "title": "Open each ad’s install on that ad’s promise", "screen": "Goal", "outcome": "CR +5–15%" },
+    { "n": 3, "title": "Make the loader read their answers back", "screen": "Loader", "outcome": "CR +10–15%" },
+    { "n": 4, "title": "Put your proof next to the price", "screen": "Plus", "outcome": "CR +10–15%" },
+    { "n": 5, "title": "Pre-select yearly and show what it saves", "screen": "Plus", "outcome": "ARPU +10–15%" }
+  ]
+}

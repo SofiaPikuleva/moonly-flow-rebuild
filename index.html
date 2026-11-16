@@ -1,0 +1,977 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+<meta name="color-scheme" content="light">
+<title>Growth Audit — Moonly</title>
+<meta name="description" content="Moonly runs a Soulmate Reading ad, an astrologer ad and a tarot ad, and all three open the same page. Here is a first launch that keeps each ad's promise, built in Moonly's own design.">
+<link rel="icon" href="img/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&display=swap" rel="stylesheet">
+<style>
+/* Shell: white, Moonly's night ink, and the orange of the Moonly crescent. Phone: the app's #17181D, its white pill, its violet and DM Sans. */
+:root{
+  color-scheme:only light;
+  --ink:#17181D; --ink-soft:#2A2B31; --muted:rgba(23,24,29,.62); --faint:rgba(23,24,29,.22); --line:rgba(23,24,29,.09);
+  --soft:#FAFAFB; --cream:#F3F2F6; --cream2:#E8E6EE; --white:#FFFFFF;
+  --gold:#F3974D; --gold-lift:#B25E17; --gold-soft:#FDEBDB; --violet:#4A3AE8;
+  --mark:linear-gradient(transparent 60%,rgba(243,151,77,.38) 60%);
+  --f:'Inter',system-ui,-apple-system,'Helvetica Neue',Arial,sans-serif;
+  --fp:'DM Sans',-apple-system,system-ui,sans-serif;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+html,body{overflow-x:clip}
+body{font-family:var(--f);color:var(--ink-soft);background:var(--white);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+a{color:inherit}
+img,video{display:block}
+em.g{font-style:normal;background:var(--mark);padding:0 2px}
+.hero em.g{background:none;color:#F7A867}
+.wrap{max-width:1200px;margin:0 auto;padding:0 40px}
+@media(max-width:700px){.wrap{padding:0 16px}}
+
+/* ---- top bar ---- */
+.nav{position:sticky;top:0;z-index:50;padding:12px 12px 0}
+.nav-in{max-width:1200px;margin:0 auto;padding:0 10px 0 22px;height:60px;display:flex;align-items:center;gap:14px;background:rgba(243,242,246,.86);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-radius:999px;box-shadow:0 1px 0 var(--line)}
+@media(max-width:700px){.nav-in{padding:0 8px 0 16px;gap:8px}}
+.logo{width:112px;height:22px;background:var(--ink);-webkit-mask:url(img/wm-mask.png) left center/contain no-repeat;mask:url(img/wm-mask.png) left center/contain no-repeat;flex:none}
+@media(max-width:400px){.logo{width:88px}}
+.nav-in .sep{width:1px;height:20px;background:var(--faint)}
+.nav-in .lbl{font-size:14px;color:var(--muted);white-space:nowrap}
+@media(max-width:700px){.nav-in .sep,.nav-in .lbl{display:none}}
+.tabs{margin-left:auto;display:flex;gap:2px}
+.tabs button{height:40px;padding:0 16px;border-radius:999px;font-size:15px;font-weight:500;color:var(--muted)}
+@media(max-width:400px){.tabs button{padding:0 11px;font-size:14px}}
+.tabs button.on{background:var(--white);color:var(--ink);box-shadow:0 1px 3px rgba(23,24,29,.1)}
+.demo{height:44px;padding:0 20px;border-radius:999px;background:var(--ink);color:#fff;font-size:15px;font-weight:500;display:flex;align-items:center;text-decoration:none;white-space:nowrap}
+.demo:hover{background:#000}
+@media(max-width:560px){.nav .demo{display:none}}
+.view{display:none}.view.on{display:block}
+
+/* ======================= OVERVIEW: Moonly's night sky as the hero frame ======================= */
+.sky{background:radial-gradient(120% 90% at 85% 10%,#2B2560 0%,#17181D 55%,#111216 100%)}
+.hero-frame{margin:-72px 12px 0;border-radius:20px;overflow:hidden;position:relative;color:#fff;min-height:720px;display:flex;align-items:flex-end}
+.hero-frame::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(17,18,22,.92) 0%,rgba(17,18,22,.55) 55%,rgba(17,18,22,.08) 100%);pointer-events:none}
+.stars{position:absolute;inset:0;pointer-events:none}
+.stars i{position:absolute;width:2px;height:2px;border-radius:50%;background:#fff;opacity:.5;animation:tw 4s ease-in-out infinite}
+@keyframes tw{50%{opacity:.08}}
+.moonph{position:absolute;right:7%;top:96px;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle at 38% 36%,#F6F1E7 0%,#D9D2C3 60%,#B9B0A0 100%);box-shadow:0 0 80px rgba(243,151,77,.25);overflow:hidden;opacity:.9}
+.moonph::after{content:"";position:absolute;top:0;width:150px;height:150px;border-radius:50%;background:#16171D;left:-150px;animation:phase 18s linear infinite}
+@keyframes phase{0%{left:-6%}50%{left:100%}50.01%{left:-100%}100%{left:-6%}}
+.glyphs{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.glyphs span{position:absolute;bottom:-60px;font:400 40px/1 var(--fp);color:rgba(255,255,255,.13);animation:rise linear infinite}
+@keyframes rise{to{transform:translateY(-860px) rotate(25deg)}}
+@media(prefers-reduced-motion:reduce){.glyphs span,.stars i,.moonph::after{animation:none}}
+.hero-in{position:relative;z-index:2;width:100%;display:grid;grid-template-columns:1.25fr .75fr;gap:30px;align-items:end;padding-top:150px;padding-bottom:56px}
+@media(max-width:900px){.hero-frame{min-height:0}.hero-in{grid-template-columns:minmax(0,1fr);padding-top:150px;padding-bottom:36px}.moonph{width:64px;height:64px;top:84px;right:8%}.moonph::after{width:64px;height:64px}}
+@media(max-width:440px){.btn-w,.btn-o{font-size:14.5px;padding:0 15px;height:46px}}
+.eyebrow{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.75);font-weight:500}
+.hero h1{font-size:clamp(40px,5.6vw,72px);line-height:1.03;font-weight:600;letter-spacing:-.03em;margin-top:16px;max-width:800px}
+.hero .lead{font-size:clamp(17px,1.7vw,19px);line-height:1.55;margin-top:20px;max-width:640px;color:rgba(255,255,255,.86)}
+.cta-row{display:flex;gap:10px;align-items:center;margin-top:28px;flex-wrap:wrap}
+.btn-w{height:50px;padding:0 24px;border-radius:999px;background:#fff;color:var(--ink);font-size:17px;font-weight:500;display:inline-flex;align-items:center;gap:10px}
+.btn-w:hover{background:var(--cream)}
+.btn-o{height:50px;padding:0 22px;border-radius:999px;background:rgba(255,255,255,.14);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:#fff;font-size:17px;font-weight:500;display:inline-flex;align-items:center;gap:8px}
+.btn-o:hover{background:rgba(255,255,255,.24)}
+.byline{margin-top:16px;font-size:14px;color:rgba(255,255,255,.66)}
+.fan{position:relative;height:420px}
+.fan img{position:absolute;width:180px;aspect-ratio:1242/2688;object-fit:cover;object-position:top;border-radius:18px;border:4px solid #2A2B33;box-shadow:0 24px 60px rgba(0,0,0,.5)}
+.fan .j{width:84px;height:84px;border-radius:22px;border:0;aspect-ratio:auto;left:40%;bottom:0;z-index:4}
+@media(max-width:900px){.fan{height:290px}.fan img{width:124px;border-width:3px;border-radius:13px}.fan .j{width:62px;height:62px;border-radius:16px}}
+
+.statsb{margin:12px 12px 0;border-radius:20px;background:var(--cream)}
+.statsb .wrap{display:grid;grid-template-columns:repeat(4,1fr)}
+.stat{padding:30px 18px;text-align:center;border-left:1px solid var(--line)}
+.stat:first-child{border-left:0}
+.stat b{display:block;font-size:38px;font-weight:600;letter-spacing:-.03em;line-height:1.1;color:var(--ink)}
+.stat b i{font-style:normal;color:var(--gold)}
+.stat span{display:block;font-size:14px;color:var(--muted);margin-top:6px;line-height:1.35}
+@media(max-width:800px){.statsb .wrap{grid-template-columns:repeat(2,1fr)}.stat:nth-child(3){border-left:0}.stat{border-top:1px solid var(--line)}.stat:nth-child(-n+2){border-top:0}}
+
+.sec{padding:96px 0}
+@media(max-width:700px){.sec{padding:64px 0}}
+.sec-h{font-size:clamp(30px,3.9vw,48px);line-height:1.08;font-weight:600;letter-spacing:-.03em;max-width:880px;color:var(--ink)}
+.sec-h b{font-weight:600;color:var(--muted)}
+.sec-p{font-size:18px;line-height:1.6;color:var(--muted);margin-top:18px;max-width:780px}
+.kick{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:500;margin-bottom:14px}
+
+.about{display:grid;grid-template-columns:1.2fr 1fr;gap:48px;align-items:start}
+@media(max-width:860px){.about{grid-template-columns:1fr}}
+.flowp{margin-top:26px;display:flex;flex-direction:column;gap:10px}
+.flowp div{display:flex;gap:12px;align-items:flex-start;font-size:16px;color:var(--ink-soft);line-height:1.45}
+.flowp i{font-style:normal;flex:none;width:22px;height:22px;border-radius:50%;background:var(--gold);color:#fff;display:grid;place-items:center;font-size:12px;margin-top:1px}
+.flowp b{font-weight:600;color:var(--ink)}
+.flowp .k2{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:500;margin-top:8px}
+.note{background:var(--cream);border-radius:16px;padding:22px 24px}
+.note h4{font-size:17px;font-weight:600;color:var(--ink);margin-bottom:6px;display:flex;gap:10px;align-items:center}
+.note h4 i{font-style:normal;width:26px;height:26px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-size:12px}
+.note p{font-size:15px;color:var(--muted);line-height:1.55}
+.note+.note{margin-top:10px}
+
+/* your ads */
+.lib{background:var(--cream);border-radius:20px;padding:28px;margin-top:16px;display:grid;grid-template-columns:250px 1fr;gap:32px;align-items:start}
+.lib:first-of-type{margin-top:44px}
+@media(max-width:760px){.lib{grid-template-columns:1fr;padding:16px}}
+.vid{position:relative;border-radius:14px;overflow:hidden;background:#000;aspect-ratio:9/16;max-width:250px}
+.vid video{width:100%;height:100%;object-fit:cover}
+.vid .tag{position:absolute;top:10px;left:10px;background:rgba(255,255,255,.94);color:var(--ink);font-size:11px;font-weight:600;letter-spacing:.06em;padding:5px 10px;border-radius:999px;display:flex;gap:6px;align-items:center}
+.vid .tag::before{content:"";width:8px;height:8px;border-radius:50%;background:#0866FF}
+.strip{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px;max-width:250px}
+.strip img{width:100%;aspect-ratio:9/16;object-fit:cover;border-radius:6px}
+.adb .hook{font-size:24px;font-weight:600;letter-spacing:-.01em;line-height:1.3;color:var(--ink)}
+.adb .hook small{display:block;font-size:15px;font-weight:400;color:var(--muted);margin-top:6px}
+.adb .meta{font-size:13.5px;color:var(--muted);margin-top:10px}
+.adb dl{margin-top:4px;font-size:15px;line-height:1.5}
+.adb dt{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:14px;font-weight:600}
+.adb dd{color:var(--ink-soft)}
+.adb .go{margin-top:20px}
+.adb .go button{height:48px;padding:0 24px;border-radius:999px;background:var(--ink);color:#fff;font-size:15px;font-weight:500}
+.lib-foot{margin-top:16px;font-size:14px;color:var(--muted);line-height:1.55;max-width:880px}
+
+/* the five ideas */
+.list{margin-top:40px;display:flex;flex-direction:column;max-width:980px;border-top:1px solid var(--line)}
+.it{display:grid;grid-template-columns:64px 1fr;gap:18px;padding:26px 6px;cursor:pointer;border-bottom:1px solid var(--line);transition:background .2s}
+.it:hover{background:var(--soft)}
+@media(max-width:600px){.it{grid-template-columns:40px 1fr;gap:10px}}
+.it .em{font-size:22px;font-weight:600;color:var(--muted);letter-spacing:-.02em;padding-top:2px}
+.it h3{font-size:22px;font-weight:600;letter-spacing:-.02em;line-height:1.3;color:var(--ink)}
+.it p{font-size:15.5px;color:var(--muted);margin-top:6px;line-height:1.55;max-width:780px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:12px;flex-wrap:wrap}
+.out{display:inline-flex;align-items:baseline;gap:8px;background:var(--gold-soft);color:#7A3E0A;padding:5px 12px;border-radius:999px;font-weight:600;font-size:14.5px}
+.out small{font-weight:400;font-size:12.5px}
+.see{font-size:14.5px;color:var(--ink);font-weight:500;text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--faint)}
+
+/* the outcome */
+.outc{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:40px}
+@media(max-width:860px){.outc{grid-template-columns:1fr}}
+.osh{position:relative;overflow:hidden;color:#fff;border-radius:20px;padding:36px 32px;display:flex;flex-direction:column;justify-content:flex-end;min-height:440px}
+.osh>img{position:absolute;left:50%;top:30px;width:62%;max-width:340px;transform:translateX(-50%);border-radius:14px;opacity:.95}
+.osh::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(17,18,22,.97) 38%,rgba(17,18,22,.1) 80%)}
+.osh>*:not(img){position:relative;z-index:2}
+.osh .k{font-size:12px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.7)}
+.osh h3{font-size:30px;font-weight:600;letter-spacing:-.03em;margin-top:8px;line-height:1.15;max-width:460px}
+.osh .nums{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
+.osh .nums div{background:rgba(255,255,255,.1);border-radius:16px;padding:14px 20px;min-width:130px}
+.osh .nums b{display:block;font-size:36px;font-weight:600;letter-spacing:-.03em;line-height:1;color:#F7A867}
+.osh .nums span{font-size:13.5px;color:rgba(255,255,255,.8)}
+.osh .cap{font-size:14.5px;color:rgba(255,255,255,.78);margin-top:18px;line-height:1.5;max-width:470px}
+.dos{display:flex;flex-direction:column;gap:12px}
+.do{background:var(--cream);border-radius:20px;padding:24px 26px;flex:1}
+.do .k{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:500;margin-bottom:6px}
+.do h4{font-size:20px;font-weight:600;letter-spacing:-.02em;color:var(--ink)}
+.do p{font-size:15px;color:var(--muted);margin-top:6px;line-height:1.55}
+.endcta{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:40px}
+.btn-k{height:52px;padding:0 26px;border-radius:999px;background:var(--ink);color:#fff;font-size:17px;font-weight:500;display:inline-flex;align-items:center}
+.btn-k:hover{background:#000}
+.btn-l{height:52px;padding:0 24px;border-radius:999px;background:var(--cream);color:var(--ink);font-size:17px;font-weight:500;display:inline-flex;align-items:center;text-decoration:none}
+.foot{font-size:13px;color:var(--muted);line-height:1.6;padding:30px 0 60px;border-top:1px solid var(--line);margin-top:36px}
+
+/* ======================= PROTOTYPE VIEW ======================= */
+.pwv{padding-top:48px;padding-bottom:70px}
+.pwv>h1{font-size:clamp(34px,4.6vw,56px);font-weight:600;line-height:1.04;letter-spacing:-.03em;color:var(--ink)}
+.pwv>h1 b{font-weight:600;color:var(--muted)}
+.pwv .sub{font-size:18px;color:var(--muted);margin-top:14px;max-width:820px}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:24px;align-items:center}
+.seg{display:inline-flex;background:var(--cream);border-radius:999px;padding:3px}
+.seg button{height:36px;padding:0 14px;border-radius:999px;font-size:14px;font-weight:500;color:var(--muted)}
+.seg button.on{background:var(--white);color:var(--ink);box-shadow:0 1px 3px rgba(23,24,29,.12)}
+.wt{height:42px;padding:0 18px;border-radius:999px;background:var(--ink);color:#fff;font-size:14.5px;font-weight:500;display:inline-flex;align-items:center;gap:8px}
+.wt.on{background:var(--gold);color:#fff}
+.steps{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.steps button{height:44px;padding:0 16px;border-radius:999px;background:var(--cream);font-size:15px;font-weight:500;color:var(--ink-soft);transition:all .15s}
+.steps button:hover{background:var(--cream2)}
+.steps button.on{background:var(--ink);color:#fff}
+.steps button.td{background:#fff;box-shadow:inset 0 0 0 1.5px var(--faint);color:var(--muted)}
+.steps button.td.on{background:var(--muted);color:#fff;box-shadow:none}
+.stcap{margin-top:14px;font-size:15.5px;color:var(--muted);min-height:24px;max-width:900px}
+.stcap b{font-weight:600;color:var(--ink)}
+.dcap{margin-top:14px;height:0;overflow:hidden;transition:height .25s}
+.dcap.on{height:58px}
+.dcap-in{display:flex;align-items:center;gap:14px;background:var(--ink);color:#fff;border-radius:16px;padding:0 18px;height:58px;font-size:15px}
+.dcap-in .pr{flex:none;width:120px;height:4px;background:rgba(255,255,255,.2);border-radius:2px;overflow:hidden}
+.dcap-in .pr i{display:block;height:100%;width:0;background:#F7A867}
+.dcap-in span{flex:1}
+@media(max-width:600px){.dcap.on{position:fixed;left:8px;right:8px;bottom:8px;z-index:60;margin:0}}
+.trio{display:flex;gap:28px;justify-content:center;margin-top:26px;--sc:.8}
+@media(max-width:899px){.trio{justify-content:flex-start;overflow-x:auto;scroll-snap-type:x mandatory;padding:0 16px 14px;margin-left:-16px;margin-right:-16px;gap:16px}}
+.tcol{flex:none;display:flex;flex-direction:column;align-items:center;scroll-snap-align:center}
+.apill{display:flex;align-items:center;gap:8px;height:34px;padding:0 14px 0 6px;border-radius:999px;background:var(--cream);font-size:13.5px;font-weight:500;color:var(--ink-soft);margin-bottom:14px;max-width:calc(390px * var(--sc) + 20px);white-space:nowrap;overflow:hidden}
+.apill .mt{height:24px;padding:0 9px;border-radius:99px;background:#0866FF;color:#fff;font-size:11.5px;display:inline-flex;align-items:center;flex:none}
+.apill .tx{overflow:hidden;text-overflow:ellipsis}
+.pbox{width:calc(390px * var(--sc));height:calc(844px * var(--sc));position:relative}
+.phone{position:absolute;left:0;top:0;width:390px;height:844px;transform:scale(var(--sc));transform-origin:0 0;border-radius:58px;background:#0c0c0e;padding:12px;box-shadow:0 30px 60px rgba(23,24,29,.22),0 0 0 2px #2c2c30 inset}
+.tcol.ring .phone{box-shadow:0 30px 60px rgba(23,24,29,.22),0 0 0 6px var(--ring)}
+.tlab{margin-top:16px;text-align:center;max-width:calc(390px * var(--sc) + 10px)}
+.tlab b{display:block;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);font-weight:600}
+.tlab span{display:block;font-size:14px;color:var(--muted);margin-top:4px;line-height:1.45}
+.finger{position:absolute;z-index:30;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;background:rgba(255,255,255,.55);box-shadow:0 0 0 2px rgba(23,24,29,.35),0 6px 18px rgba(0,0,0,.35);pointer-events:none;opacity:0;transition:left .38s var(--ease),top .38s var(--ease),transform .12s,opacity .2s}
+.finger.on{opacity:1}.finger.press{transform:scale(.72)}
+
+/* ---- inside the phone: Moonly, as it ships ---- */
+.scr{position:absolute;inset:12px;border-radius:46px;overflow:hidden;color-scheme:only light;
+  --m-bg:#17181D; --m-card:#222327; --m-card2:#2A2B31; --m-sel:#464958; --m-ink:#FFFFFF; --m-ink2:rgba(255,255,255,.78); --m-mute:rgba(255,255,255,.5); --m-line:rgba(255,255,255,.09); --m-pill:#FFFFFF; --m-pillt:#111216; --m-vio:#4A3AE8; --m-vio2:#CFB8FF; --m-or:#F3974D; --m-gold:#F5B83D;
+  background:var(--m-bg);color:var(--m-ink);font-family:var(--fp);display:flex;flex-direction:column}
+.phone.lt .scr{--m-bg:#F4F3F8; --m-card:#FFFFFF; --m-card2:#ECEAF3; --m-sel:#DCD8F0; --m-ink:#17181D; --m-ink2:rgba(23,24,29,.78); --m-mute:rgba(23,24,29,.5); --m-line:rgba(23,24,29,.1); --m-pill:#17181D; --m-pillt:#FFFFFF; --m-vio2:#4A3AE8}
+.m-sb{height:50px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 30px 0 36px;font-size:15px;font-weight:600;font-family:-apple-system,sans-serif;position:relative;z-index:6;color:var(--m-ink)}
+.m-sb.w{color:#fff}
+.m-sb .isl{position:absolute;left:50%;top:11px;width:120px;height:34px;margin-left:-60px;background:#000;border-radius:20px}
+.m-sb .ic{display:flex;gap:5px;align-items:center}
+.m-top{flex:none;height:46px;display:flex;align-items:center;justify-content:center;position:relative;z-index:5}
+.m-back{position:absolute;left:18px;top:8px;width:30px;height:30px;color:var(--m-mute);display:grid;place-items:center}
+.m-back svg{width:20px;height:20px}
+.m-x{position:absolute;left:16px;top:6px;width:34px;height:34px;border-radius:50%;background:var(--m-card2);color:var(--m-ink2);display:grid;place-items:center;z-index:3}
+.m-x svg{width:16px;height:16px}
+.m-wm{display:flex;align-items:center;gap:4px;height:24px}
+.m-wm img{height:22px}
+.m-wm i{display:block;width:96px;height:22px;background:var(--m-ink);-webkit-mask:url(img/wm-text.png) left center/contain no-repeat;mask:url(img/wm-text.png) left center/contain no-repeat}
+.scr-body{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;position:relative;padding:0 22px 18px}
+.scr-body::-webkit-scrollbar{display:none}
+.scr-body.m-col{display:flex;flex-direction:column}
+.scr-foot{flex:none;padding:10px 22px 30px;position:relative;z-index:4;background:var(--m-bg)}
+.scr-foot.m-sep{box-shadow:0 -1px 0 var(--m-line)}
+.m-cta{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:58px;border-radius:999px;background:var(--m-pill);color:var(--m-pillt);font:700 16.5px/1 var(--fp);letter-spacing:.01em;text-transform:uppercase}
+.m-cta[disabled]{opacity:.35;cursor:default}
+.m-cta.v{background:var(--m-vio);color:#fff}
+.m-fine{font-size:12.5px;color:var(--m-ink2);text-align:center;margin-top:10px}
+.m-q{display:flex;gap:16px;align-items:center;margin-top:12px}
+.m-q img{width:66px;height:66px;border-radius:50%;flex:none;box-shadow:0 0 0 2px rgba(255,255,255,.06)}
+.m-q h2{font:700 27px/1.15 var(--fp);letter-spacing:-.01em}
+.m-q p{font-size:14px;line-height:1.4;color:var(--m-ink2);margin-top:6px}
+.m-opts{display:flex;flex-direction:column;gap:9px;margin-top:22px}
+.m-opt{display:block;width:100%;text-align:left;background:var(--m-card);border-radius:30px;padding:17px 22px;color:var(--m-ink);font:500 16.5px/1.3 var(--fp);transition:background .18s}
+.m-opt.on{background:var(--m-sel)}
+.m-opt small{display:none;font-size:12.5px;line-height:1.45;color:var(--m-ink2);margin-top:6px;font-weight:400}
+.m-opt.on small{display:block}
+.m-ad{display:inline-flex;align-items:center;gap:7px;height:28px;padding:0 12px;border-radius:999px;background:rgba(8,102,255,.18);color:#7FB0FF;font-size:12px;font-weight:700;margin-top:14px}
+.phone.lt .m-ad{background:rgba(8,102,255,.1);color:#0A58D6}
+.m-toast{position:absolute;left:50%;bottom:118px;transform:translateX(-50%) translateY(10px);background:rgba(255,255,255,.95);color:#17181D;font:600 13px/1.3 var(--f);padding:10px 15px;border-radius:999px;opacity:0;transition:all .25s;pointer-events:none;z-index:40;white-space:nowrap;box-shadow:0 6px 20px rgba(0,0,0,.3)}
+.m-toast.show{opacity:1;transform:translateX(-50%)}
+.pulse{animation:pulse 1.6s ease-out 2}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(243,151,77,.95)}100%{box-shadow:0 0 0 16px rgba(243,151,77,0)}}
+
+/* Reels, where the ad runs */
+.reel{position:absolute;inset:0;background:#000;color:#fff;font-family:-apple-system,sans-serif}
+.reel video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.reel .rtop{position:absolute;top:54px;left:16px;right:16px;display:flex;justify-content:space-between;font-weight:700;font-size:20px;z-index:2;text-shadow:0 1px 6px rgba(0,0,0,.5)}
+.reel .rshade{position:absolute;left:0;right:0;bottom:0;height:52%;background:linear-gradient(0deg,rgba(0,0,0,.85),transparent)}
+.reel .rbot{position:absolute;left:14px;right:64px;bottom:34px;z-index:2}
+.reel .acc{display:flex;gap:9px;align-items:center;font-size:14px;font-weight:600}
+.reel .acc img{width:32px;height:32px;border-radius:50%;border:1.5px solid #fff}
+.reel .acc small{display:block;font-weight:400;font-size:12px;opacity:.8}
+.reel .cp{font-size:13.5px;line-height:1.4;margin-top:10px;opacity:.95}
+.reel .ctab{display:flex;align-items:center;justify-content:space-between;margin-top:12px;background:rgba(255,255,255,.18);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-radius:10px;padding:10px 12px;width:calc(100% + 50px)}
+.reel .ctab b{display:block;font-size:13.5px;line-height:1.3}
+.reel .ctab small{display:block;font-size:11px;opacity:.75;text-transform:uppercase;letter-spacing:.04em}
+.reel .ctab button{flex:none;height:34px;padding:0 16px;border-radius:8px;background:#0866FF;color:#fff;font-weight:600;font-size:14px;margin-left:10px}
+.reel .side{position:absolute;right:12px;bottom:120px;display:flex;flex-direction:column;gap:22px;z-index:2}
+.reel .side i{display:block;width:28px;height:28px;border-radius:50%;border:2.5px solid #fff;opacity:.9}
+
+/* welcome */
+.m-wel{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center}
+.m-art{position:relative;width:100%;height:330px;margin-top:4px}
+.m-art img{position:absolute;border-radius:22px;object-fit:cover;box-shadow:0 18px 40px rgba(0,0,0,.45)}
+.m-art img[src*=shot-]{object-position:50% 80%}
+.m-art .a1{width:150px;height:270px;left:32px;top:30px;transform:rotate(-7deg)}
+.m-art .a2{width:150px;height:270px;right:32px;top:14px;transform:rotate(6deg)}
+.m-art .g{width:92px;height:92px;border-radius:50%;left:50%;margin-left:-46px;top:210px;z-index:2;box-shadow:0 0 0 4px var(--m-bg),0 10px 30px rgba(0,0,0,.4)}
+.m-spark{position:absolute;color:#F7C77C;font-size:22px}
+.m-wel h1{font:700 29px/1.17 var(--fp);letter-spacing:-.01em;margin-top:18px;padding:0 6px}
+.m-wel p{font-size:15.5px;line-height:1.45;color:var(--m-ink2);margin-top:12px;padding:0 10px}
+
+/* ATT */
+.m-att{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding-bottom:40px}
+.m-att .ring{width:132px;height:132px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle,rgba(74,58,232,.35),transparent 70%)}
+.m-att .ring img{width:96px;height:96px;border-radius:50%}
+.m-att h2{font:700 26px/1.2 var(--fp);margin-top:22px}
+.m-att p{font-size:15px;line-height:1.5;color:var(--m-ink2);margin-top:12px;max-width:300px}
+.sys{position:absolute;inset:0;z-index:20;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;font-family:-apple-system,sans-serif}
+.sys-in{width:290px;border-radius:26px;background:rgba(40,40,42,.97);color:#fff;padding:20px 18px 14px;text-align:left}
+.phone.lt .sys-in{background:rgba(246,246,248,.98);color:#000}
+.sys-in img{width:46px;height:46px;border-radius:11px}
+.sys-in h5{font-size:17px;font-weight:600;line-height:1.3;margin-top:14px}
+.sys-in p{font-size:13px;line-height:1.45;opacity:.7;margin-top:8px}
+.sys-in button{display:block;width:100%;height:44px;border-radius:999px;background:rgba(120,120,128,.24);font-size:16px;font-weight:500;margin-top:10px}
+
+/* mood orb */
+.m-orb{position:relative;width:280px;height:280px;margin:26px auto 0;display:grid;place-items:center}
+.m-orb i{position:absolute;border-radius:50%;transition:all .5s var(--ease)}
+.m-orb .o1{inset:0;background:radial-gradient(circle,rgba(0,0,0,0) 55%,var(--oc1) 100%);border:1.5px solid var(--oc1);opacity:.9}
+.m-orb .o2{inset:48px;background:radial-gradient(circle,var(--oc2) 0%,rgba(0,0,0,0) 75%);border:1px solid var(--oc2)}
+.m-orb .o3{width:88px;height:88px;background:radial-gradient(circle,var(--oc3),var(--oc2));border-radius:38% 62% 45% 55%/45% 40% 60% 55%;animation:blob 6s ease-in-out infinite;box-shadow:0 0 30px var(--oc2)}
+@keyframes blob{50%{border-radius:58% 42% 60% 40%/50% 62% 38% 50%;transform:rotate(30deg)}}
+.m-mood{text-align:center;font:700 20px/1 var(--fp);margin-top:22px}
+.m-sl{display:flex;justify-content:space-between;align-items:center;background:var(--m-card);border-radius:20px;height:52px;padding:0 8px;margin-top:18px}
+.m-sl button{width:56px;height:40px;border-radius:14px;display:grid;place-items:center}
+.m-sl button::after{content:"";width:6px;height:6px;border-radius:50%;background:var(--m-mute)}
+.m-sl button.on{background:#fff}
+.m-sl button.on::after{background:#17181D}
+.phone.lt .m-sl button.on{background:#17181D}.phone.lt .m-sl button.on::after{background:#fff}
+.m-sll{display:flex;justify-content:space-between;font-size:11.5px;font-weight:600;letter-spacing:.04em;color:var(--m-mute);margin-top:9px;text-transform:uppercase}
+
+/* birthday wheel */
+.m-wheel{position:relative;display:flex;gap:6px;margin-top:30px;height:180px}
+.m-wheel .hl{position:absolute;left:0;right:0;top:72px;height:36px;border-radius:12px;background:var(--m-card2);pointer-events:none}
+.m-wc{position:relative;flex:1;height:180px;overflow-y:auto;scroll-snap-type:y mandatory;scrollbar-width:none;-webkit-mask:linear-gradient(transparent,#000 30%,#000 70%,transparent);mask:linear-gradient(transparent,#000 30%,#000 70%,transparent)}
+.m-wc::-webkit-scrollbar{display:none}
+.m-wc.y{flex:1.1}.m-wc.mo{flex:1.5}
+.m-wc div{height:36px;line-height:36px;text-align:center;font-size:19px;font-weight:600;scroll-snap-align:center;color:var(--m-ink)}
+.m-wc .sp{height:72px;scroll-snap-align:none}
+.m-zs{display:flex;gap:14px;align-items:center;background:var(--m-card);border-radius:20px;padding:12px 16px;margin-top:22px}
+.m-zs img{width:52px;height:46px;object-fit:contain}
+.m-zs b{display:block;font-size:16px}
+.m-zs small{display:block;font-size:12.5px;color:var(--m-mute);margin-top:2px}
+.m-why{text-align:center;margin-top:20px}
+.m-why b{display:block;font-size:17px}
+.m-why p{font-size:13px;line-height:1.5;color:var(--m-ink2);margin-top:6px}
+
+/* loader */
+.m-ld{margin-top:26px;display:flex;flex-direction:column;gap:20px}
+.m-ld .r{transition:opacity .3s}
+.m-ld .r.dim{opacity:.38}
+.m-ld .t{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:15.5px;font-weight:500;line-height:1.3}
+.m-ld .t b{font-weight:700;color:var(--m-or)}
+.m-ld .t span:last-child{flex:none;font-weight:600;color:var(--m-or)}
+.m-ld .bar{height:5px;border-radius:3px;background:var(--m-card2);margin-top:10px;overflow:hidden}
+.m-ld .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#C7743A,var(--m-or));border-radius:3px;transition:width .5s linear}
+.m-sun{position:relative;height:220px;margin-top:18px;display:grid;place-items:center}
+.m-sun i{position:absolute;border-radius:50%;border:1px solid var(--m-line)}
+.m-sun img{width:110px;height:110px;border-radius:50%;animation:bob 1.6s ease-in-out infinite;box-shadow:0 0 50px rgba(243,151,77,.35)}
+@keyframes bob{50%{transform:translateY(-8px)}}
+.m-rv{background:var(--m-card);border-radius:20px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start}
+.m-rv .av{width:42px;height:42px;border-radius:50%;flex:none;background:var(--m-card2);display:grid;place-items:center;font-weight:700;color:var(--m-ink2)}
+.m-rv .st{color:var(--m-gold);font-size:13px;letter-spacing:1px}
+.m-rv p{font-size:12.5px;line-height:1.45;color:var(--m-ink2);margin-top:3px}
+.m-rv small{display:block;font-size:11.5px;color:var(--m-mute);margin-top:4px}
+
+/* true sign */
+.m-ts h1{text-align:center;font:700 29px/1.15 var(--fp);margin-top:12px}
+.m-ts p{text-align:center;font-size:14.5px;line-height:1.45;color:var(--m-ink2);margin-top:10px}
+.m-cards{position:relative;height:270px;margin-top:20px}
+.m-cards .c{position:absolute;width:162px;height:212px;border-radius:30px;overflow:hidden;top:14px}
+.m-cards .c1{left:6px;transform:rotate(-5deg);background:linear-gradient(160deg,#3B2F7A,#1F2235)}
+.m-cards .c2{right:6px;transform:rotate(5deg)}
+.m-cards .c img{width:100%;height:100%;object-fit:cover}
+.m-cards .c1 img.z{width:120px;height:104px;object-fit:contain;margin:44px auto 0}
+.m-cards .c2 img{filter:blur(14px);transform:scale(1.2)}
+.m-cards .lb{position:absolute;bottom:0;width:162px;text-align:center;font-size:14px;font-weight:600;line-height:1.2}
+.m-cards .lb1{left:6px}.m-cards .lb2{right:6px}
+.m-date{display:flex;gap:12px;align-items:center;background:var(--m-card);border-radius:18px;padding:10px 16px;margin-top:14px}
+.m-date img{width:40px;height:36px;object-fit:contain}
+.m-date b{font-size:15px}
+.m-unl{margin-top:12px;background:var(--m-card);border-radius:18px;padding:12px 16px}
+.m-unl b{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--m-mute)}
+.m-unl span{display:block;font-size:14.5px;font-weight:600;margin-top:4px}
+
+/* paywall */
+.m-pwh{background:var(--m-card);border-radius:26px;padding:18px 18px 18px;position:relative;margin-top:4px}
+.m-pwh .bd{display:flex;align-items:center;gap:6px}
+.m-pwh .bd .m-wm i{width:74px;height:17px}
+.m-pwh .bd .m-wm img{height:17px}
+.m-pwh .bd .plus{height:20px;padding:0 7px;border-radius:6px;background:linear-gradient(90deg,#F7B062,#E98C3E);color:#3A1C04;font-size:10.5px;font-weight:800;display:inline-flex;align-items:center;letter-spacing:.04em}
+.m-pwh .gv{position:absolute;right:16px;top:14px;width:58px;height:58px;border-radius:50%}
+.m-pwh h1{font:700 27px/1.12 var(--fp);letter-spacing:-.01em;margin-top:14px;padding-right:48px}
+.m-pwh p{font-size:14px;line-height:1.45;color:var(--m-ink2);margin-top:9px}
+.m-chip{display:inline-flex;align-items:center;gap:6px;min-height:28px;padding:4px 12px;border-radius:999px;background:var(--m-card2);font-size:12px;font-weight:600;color:var(--m-ink2);margin-top:12px;line-height:1.3}
+.m-chip b{color:var(--m-or)}
+.m-proof{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:14px;flex-wrap:wrap}
+.m-proof .st{color:var(--m-gold);letter-spacing:1px;font-size:14px}
+.m-proof span{font-size:12.5px;font-weight:600;color:var(--m-ink2)}
+.m-proof .ec{height:22px;padding:0 9px;border-radius:999px;border:1px solid var(--m-line);display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;letter-spacing:.03em}
+.m-teas{margin-top:14px;background:var(--m-card);border-radius:22px;padding:14px 16px;display:flex;gap:14px;align-items:center}
+.m-teas .vz{width:70px;height:86px;border-radius:16px;overflow:hidden;flex:none}
+.m-teas .vz img{width:100%;height:100%;object-fit:cover;filter:blur(8px);transform:scale(1.2)}
+.m-teas b{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--m-mute)}
+.m-teas span{display:block;font-size:14px;line-height:1.4;margin-top:4px}
+.m-teas em{font-style:normal;display:inline-flex;gap:5px;align-items:center;font-size:12.5px;font-weight:600;color:var(--m-vio2);margin-top:6px}
+.m-plan-l{margin-top:16px;background:var(--m-card);border-radius:22px;padding:14px 16px}
+.m-plan-l h4{font-size:17px;font-weight:700;margin-bottom:6px}
+.m-plan-l div{display:flex;gap:12px;align-items:center;padding:7px 0;border-top:1px solid var(--m-line);font-size:14.5px;font-weight:500}
+.m-plan-l div:first-of-type{border-top:0}
+.m-plan-l img{width:34px;height:34px;border-radius:9px}
+.m-all{display:block;width:100%;text-align:center;font-size:12.5px;font-weight:600;color:var(--m-vio2);margin-top:8px}
+.m-plans{margin-top:16px}
+.m-plan{position:relative;display:block;width:100%;text-align:left;background:var(--m-card);color:var(--m-ink);border-radius:22px;padding:15px 18px;margin-bottom:10px;border:2.5px solid transparent;font-family:var(--fp)}
+.m-plan.on{border-color:var(--m-vio);background:var(--m-card2)}
+.m-plan .tg{position:absolute;top:-11px;right:16px;background:var(--m-or);color:#2A1404;font:800 10.5px/1 var(--fp);letter-spacing:.05em;padding:5px 10px;border-radius:999px}
+.m-plan .rw{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.m-plan b{font-size:17px;font-weight:700}
+.m-plan .pp{font-size:17px;font-weight:700}
+.m-plan small{display:block;font-size:12.5px;color:var(--m-mute);margin-top:3px}
+.m-rev{margin-top:6px;background:var(--m-card);border-radius:20px;padding:14px 16px}
+.m-rev .st{color:var(--m-gold);font-size:13px;letter-spacing:1px}
+.m-rev p{font-size:13px;line-height:1.5;margin-top:4px}
+.m-rev small{display:block;font-size:11.5px;color:var(--m-mute);margin-top:6px}
+.m-legal{font-size:10.5px;line-height:1.55;color:var(--m-mute);margin-top:14px;text-align:center}
+.m-legal a{color:var(--m-ink2);text-decoration:underline}
+
+/* today's paywall, as it ships on the web */
+.t-bar{flex:none;margin:0 12px;background:var(--m-card);border-radius:0 0 22px 22px;display:flex;align-items:center;justify-content:space-between;padding:8px 14px}
+.t-bar small{display:block;font-size:12.5px;color:var(--m-ink2)}
+.t-bar b{display:block;font-size:20px;font-weight:700;color:#7B6CFF;line-height:1.1}
+.t-bar button{height:40px;padding:0 18px;border-radius:999px;background:var(--m-vio);color:#fff;font-weight:700;font-size:15px}
+.t-hero{margin-top:12px;background:var(--m-card);border-radius:26px;padding:16px}
+.t-hero h1{font:700 26px/1.12 var(--fp);margin-top:12px}
+.t-hero p{font-size:14px;line-height:1.4;color:var(--m-mute);margin-top:8px}
+.t-img{margin-top:10px;border-radius:22px;width:100%}
+.t-rep{margin-top:10px;background:var(--m-card);border-radius:20px;padding:12px 14px}
+.t-rep b{display:block;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase}
+.t-rep p{font-size:12.5px;line-height:1.45;color:var(--m-mute);margin-top:4px}
+.t-rep span{display:block;text-align:right;font-size:12px;font-weight:600;margin-top:4px}
+.t-foot{flex:none;padding:8px 18px 24px;text-align:center;background:var(--m-bg)}
+.t-foot h4{font-size:17px;font-weight:700}
+.t-foot .rb{display:flex;align-items:center;justify-content:space-between;width:100%;margin-top:8px;height:64px;border-radius:999px;background:var(--m-vio);color:#fff;padding:0 22px;text-align:left}
+.t-foot .rb b{display:block;font-size:17px}
+.t-foot .rb small{display:block;font-size:11.5px;opacity:.75}
+.t-foot .rb s{opacity:.75}
+.t-foot .rb em{font-style:normal;text-align:right}
+.t-foot .rb em b{font-size:20px}
+.t-foot .ok{font-size:12px;color:#5ED36A;font-weight:600;margin-top:8px}
+.t-foot .pay{display:flex;gap:6px;justify-content:center;margin-top:6px}
+.t-foot .pay i{font-style:normal;height:20px;padding:0 7px;border-radius:4px;background:#fff;color:#111;font:700 10px/20px -apple-system,sans-serif}
+.t-foot .gu{font-size:12.5px;font-weight:700;margin-top:6px}
+.cap-today{margin:14px 0 6px;border:1.5px dashed var(--m-mute);border-radius:16px;padding:12px;text-align:center;font-size:12.5px;color:var(--m-ink2);line-height:1.5;font-family:var(--f)}
+
+/* home, where the X lands */
+.h-wk{display:flex;gap:6px;margin-top:6px}
+.h-wk div{flex:1;text-align:center;font-size:10.5px;color:var(--m-mute);padding:6px 0;border-radius:14px}
+.h-wk div.on{background:var(--m-card2);color:var(--m-ink)}
+.h-wk i{display:block;width:20px;height:20px;border-radius:50%;margin:5px auto;background:radial-gradient(circle at 40% 40%,#ECE6DA,#A9A193)}
+.h-wk b{display:block;font-size:12px;color:var(--m-ink)}
+.h-card{margin-top:12px;border-radius:24px;padding:16px;color:#fff;position:relative;overflow:hidden}
+.h-card.c1{background:linear-gradient(160deg,#7C64C9,#3B2C78 70%)}
+.h-card.c2{background:linear-gradient(160deg,#283A8F,#141A45 70%)}
+.h-card small{display:block;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;opacity:.8}
+.h-card b{display:block;font-size:14px;margin-top:2px}
+.h-card p{font-size:17px;line-height:1.3;font-weight:600;margin-top:22px}
+.h-tab{flex:none;margin:0 14px 24px;height:62px;border-radius:999px;background:var(--m-card);display:flex;align-items:center;justify-content:space-around;font-size:10px;color:var(--m-mute)}
+.h-tab div{display:flex;flex-direction:column;align-items:center;gap:3px}
+.h-tab div.on{color:var(--m-ink)}
+.h-tab svg{width:21px;height:21px}
+
+.ideas{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:56px}
+@media(max-width:800px){.ideas{grid-template-columns:1fr}}
+.idea{background:var(--cream);border-radius:16px;padding:22px 24px;cursor:pointer;transition:background .15s}
+.idea:hover{background:var(--cream2)}
+.idea:last-child{grid-column:1/-1}
+.idea .n{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-lift);font-weight:600}
+.idea h3{font-size:19px;font-weight:600;letter-spacing:-.02em;margin-top:4px;line-height:1.3;color:var(--ink)}
+.idea p{font-size:14.5px;color:var(--muted);margin-top:6px;line-height:1.55}
+.idea .kept{font-size:13px;color:var(--muted);margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.qr{position:relative;overflow:hidden;display:flex;gap:26px;align-items:center;color:#fff;border-radius:20px;padding:30px 32px;margin-top:40px;flex-wrap:wrap}
+.qr>*{position:relative;z-index:2}
+.qr img.code{width:135px;height:135px;background:#fff;border-radius:12px;image-rendering:pixelated}
+.qr h3{font-size:24px;font-weight:600;letter-spacing:-.02em}
+.qr p{font-size:15px;color:rgba(255,255,255,.82);margin-top:4px;max-width:520px}
+.qr .demo{margin-left:auto;background:#fff;color:var(--ink);height:48px;padding:0 24px;font-size:16px}
+@media(max-width:1080px){.qr img.code{display:none}}
+@media(max-width:700px){.qr .demo{margin-left:0}}
+</style>
+</head>
+<body>
+
+<nav class="nav"><div class="nav-in">
+  <span class="logo" role="img" aria-label="Moonly"></span>
+  <span class="sep"></span><span class="lbl">Growth audit · by Adapty</span>
+  <div class="tabs"><button data-v="over" class="on">Overview</button><button data-v="pw">Prototype</button></div>
+  <a class="demo" href="https://calendly.com/d/cty4-37z-zqj" target="_blank" rel="noopener">Book a demo</a>
+</div></nav>
+
+<!-- ======================= OVERVIEW ======================= -->
+<div class="view on" id="view-over">
+  <header class="hero hero-frame sky">
+    <div class="stars" id="stars" aria-hidden="true"></div>
+    <div class="glyphs" id="glyphs" aria-hidden="true"></div>
+    <div class="moonph" aria-hidden="true"></div>
+    <div class="wrap hero-in">
+      <div>
+        <div class="eyebrow">Growth audit · November 2026 · Prepared by Adapty</div>
+        <h1>Three ads, three promises. <em class="g">One page for all of them.</em></h1>
+        <p class="lead">Your Soulmate Reading ad, your astrologer ad and your tarot ad all open the same hello.moonly.app page. Your quiz then asks “What would you like to Transform?”, and your web paywall still reads “Your Daily Guide to Self-Discovery” to everyone. Here is a first launch that keeps each ad’s promise, in your design, at your App Store prices.</p>
+        <div class="cta-row">
+          <button class="btn-w" data-open="pw">Open the three flows</button>
+          <button class="btn-o" data-walk>▶ Watch the 30-second walkthrough</button>
+        </div>
+        <p class="byline">Built from your web quiz at moonly.app/start, your App Store listing and the Meta ads you run today.</p>
+      </div>
+      <div class="fan" aria-hidden="true">
+        <img src="img/shot-moon.jpg" style="left:0;top:70px;transform:rotate(-8deg)" alt="">
+        <img src="img/shot-chat.jpg" style="left:29%;top:16px;transform:rotate(-1deg);z-index:2" alt="">
+        <img src="img/shot-tarot.jpg" style="left:58%;top:80px;transform:rotate(7deg)" alt="">
+        <img class="j" src="img/icon.png" alt="">
+      </div>
+    </div>
+  </header>
+
+  <div class="statsb"><div class="wrap">
+    <div class="stat"><b><i>★</i> 4.6</b><span>from 31K ratings on the US App Store</span></div>
+    <div class="stat"><b>10M</b><span>users, as your App Store page says</span></div>
+    <div class="stat"><b>~370</b><span>Moonly ads live on Meta on 16 November</span></div>
+    <div class="stat"><b>1</b><span>landing page for the soulmate, astrologer and tarot ads</span></div>
+  </div></div>
+
+  <section class="sec"><div class="wrap about">
+    <div>
+      <div class="kick">What this is</div>
+      <h2 class="sec-h">We took your quiz, read your ads, then rebuilt <b>the screens between the ad and Moonly Plus</b>.</h2>
+      <p class="sec-p">Adapty powers subscriptions for 30,000+ apps, so we see what moves purchases across the market. Nearly 500 apps build their paywalls and onboarding in Adapty Flow Builder, and millions of dollars in subscription revenue pass through it every month. For Moonly we looked for the gap between what each ad promises and what a new user is shown.</p>
+      <div class="flowp">
+        <div class="k2">Your first launch today, at moonly.app/start</div>
+        <div><i>1</i><span>“Discover your True Zodiac Sign &amp; Destiny”, START 2-MIN QUIZ. <b>Good, kept.</b></span></div>
+        <div><i>2</i><span>“What would you like to Transform?”: five goals. <b>Kept, and now used.</b></span></div>
+        <div><i>3</i><span>About twenty more screens: Moon phase, your mood orb, intuition, dreams, your guide, your birthdate. <b>Kept.</b></span></div>
+        <div><i>4</i><span>Your True Sign, then one paywall for every goal and every ad.</span></div>
+      </div>
+    </div>
+    <div>
+      <div class="note"><h4><i>1</i>Your design, not ours</h4><p>Your #17181D, the white CONTINUE pill and the violet button, DM Sans, Luna, Selena and Nova, the mood orb, your zodiac art and your plan icons. Only the order and the words that answer each ad change.</p></div>
+      <div class="note"><h4><i>2</i>Your prices, as published</h4><p>$59.99 a year or $9.99 a month: your Annual Pro and Monthly subscriptions on the US App Store. $59.99 is half of twelve months at $9.99. No trial, no timer, no invented discount.</p></div>
+      <div class="note"><h4><i>3</i>You may have tested some of this</h4><p>We cannot see your experiment history, or your iOS onboarding as it ships today. Tell us what you already ran and what differs from the web quiz, and we will go deeper on the rest.</p></div>
+    </div>
+  </div></section>
+
+  <section class="sec" id="ads" style="padding-top:0"><div class="wrap">
+    <div class="kick">Your ads on Meta</div>
+    <h2 class="sec-h">Three promises running today. <b>One page catches all of them.</b></h2>
+    <p class="sec-p">The Meta Ad Library shows about 370 active Moonly ads on 16 November. These are the three biggest English groups. Each link carries its own listing (soulmate, astrochat, tarot), and each one opens the same page: “Trusted by 10M installs”, Editors’ Choice and a Download button.</p>
+    <div id="adcards"></div>
+    <p class="lib-foot">Adapty can pick the flow at first open from the campaign an install came from. Each promise gets its own first screen and its own Plus headline, with no app release. When you add a fourth promise (numerology already runs), it gets its own flow the same day.</p>
+  </div></section>
+
+  <section class="sec" style="padding-top:0"><div class="wrap">
+    <div class="kick">The five ideas</div>
+    <h2 class="sec-h">Ranked by what we would <b>test first</b>.</h2>
+    <p class="sec-p">Tap any of them to open that screen on all three phones.</p>
+    <div class="list" id="list"></div>
+  </div></section>
+
+  <section class="sec" style="padding-top:0"><div class="wrap">
+    <div class="kick">Potential outcome</div>
+    <h2 class="sec-h">Five ideas, <b>one first launch per promise</b>.</h2>
+    <div class="outc">
+      <div class="osh sky">
+        <img src="img/phones.jpg" alt="">
+        <div class="k">The two strongest ranges</div>
+        <h3>The ad’s promise, answered on the screen they pay on</h3>
+        <div class="nums"><div><b>+15–20%</b><span>purchases</span></div><div><b>+10–15%</b><span>ARPU</span></div></div>
+        <p class="cap">The goal-led Plus headline and the pre-selected yearly plan, each judged on revenue per install against today’s. We do not add the ranges up.</p>
+      </div>
+      <div class="dos">
+        <div class="do"><div class="k">Do this week</div><h4>Let the goal write the Plus headline</h4><p>One paywall template, the goal from “What would you like to Transform?” as the variable. Built in Flow Builder, live without an app release.</p></div>
+        <div class="do"><div class="k">Then</div><h4>One first screen per ad</h4><p>Soulmate, astrologer and tarot installs open on their ad’s own line, with the matching goal already ticked.</p></div>
+        <div class="do"><div class="k">And measure</div><h4>Judge each ad on revenue, not installs</h4><p>Adapty reports purchases and revenue per install for each campaign and each goal, so spend follows the promise that pays.</p></div>
+      </div>
+    </div>
+    <div class="endcta"><button class="btn-k" data-open="pw">Open the prototype</button><a class="btn-l" href="https://calendly.com/d/cty4-37z-zqj" target="_blank" rel="noopener">Book a demo</a></div>
+    <p class="foot">Impact ranges are Adapty’s expected effect from teardowns and A/B tests across subscription apps, not measured lift for Moonly. Quiz screens, questions, guides, loader copy and today’s paywall come from your web quiz at moonly.app/start as taken on 16 November 2026, with artwork from your own CDN; your iOS onboarding and in-app paywall were not recorded, so where they differ, the web quiz is what is shown. ★ 4.6 from 31K ratings, the In-App Purchases list ($59.99 Annual Pro Subscription, $9.99 Monthly Subscription) and the review by Megziek come from the US App Store listing on 16 November 2026. 10M users and Editors’ Choice come from your App Store screenshots and moonly.app; the reviews by Lina Hoffmann and Alex Novak from moonly.app. The ads, their copy, dates and the active count come from the Meta Ad Library (advertiser Moonly, @moonlyapp) on 16 November 2026; the landing page from hello.moonly.app on the same day. “Save 50%”: $59.99 against twelve months at $9.99 ($119.88) is 50.0% less; “$5.00 a month” is $59.99 ÷ 12.</p>
+  </div></section>
+</div>
+
+<!-- ======================= PROTOTYPE ======================= -->
+<div class="view" id="view-pw">
+  <div class="wrap pwv">
+    <div class="kick">Prototype · one first launch per ad</div>
+    <h1>Three ads. <b>Three first launches.</b></h1>
+    <p class="sub">One install from each of your Meta ads: Soulmate Reading, the personal astrologer and daily tarot. Same screens, same prices. Tap the steps, or tap inside any phone: pick a goal, move the orb, scroll your birthday, choose a plan, close it.</p>
+    <div class="tools">
+      <div class="seg" id="theme"><button data-th="dark" class="on">Dark</button><button data-th="light">Light</button></div>
+      <button class="wt" id="wt" data-walk>▶ 30-second walkthrough</button>
+    </div>
+    <div class="steps" id="steps">
+      <button data-st="today" class="td">Today</button><button data-st="arrive">1 · Arrive</button><button data-st="goal">2 · Goal</button><button data-st="att">3 · Tracking</button><button data-st="mood">4 · Mood</button><button data-st="birth">5 · Birthday</button><button data-st="load">6 · Loader</button><button data-st="sign">7 · True sign</button><button data-st="pw" class="on">8 · Plus</button>
+    </div>
+    <p class="stcap" id="stcap"></p>
+    <div class="dcap" id="dcap"><div class="dcap-in"><span id="dtx"></span><div class="pr"><i id="dpr"></i></div></div></div>
+    <div class="trio" id="trio"></div>
+    <div class="ideas" id="ideas"></div>
+    <div class="qr sky">
+      <img class="code" src="img/qr.svg" alt="QR code to this prototype">
+      <div><h3>Try it on your phone</h3><p>Scan to open the three flows in your hand. Every screen is buildable in Adapty Flow Builder and testable against today’s.</p></div>
+      <a class="demo" href="https://calendly.com/d/cty4-37z-zqj" target="_blank" rel="noopener">Book a demo</a>
+    </div>
+  </div>
+</div>
+
+<script>
+var $=function(s,r){ return (r||document).querySelector(s); }, $$=function(s,r){ return [].slice.call((r||document).querySelectorAll(s)); };
+function SV(d,w){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="'+(w||2.2)+'" stroke-linecap="round" stroke-linejoin="round">'+d+'</svg>'; }
+
+/* English only: the quiz and the store listing are English; a second language comes after review */
+var G={ lang:'en', theme:'dark', step:'pw' };
+function L(en,xx){ return G.lang!=='en'&&xx?xx:en; }
+
+/* the five goals, as the quiz asks them */
+var GOALS={
+ path:{e:'🌞', t:'Discover my authentic path', d:'Your Birth Chart reveals the blueprint of your soul’s journey. Reconnect with yourself by taking small steps every day ✨', s:'your authentic path'},
+ rel:{e:'💖', t:'Build healthy relationships', d:'Discover your Astrological Compatibility, heal old patterns, and learn to build deeper bonds 💖', s:'healthy relationships'},
+ bal:{e:'🪷', t:'Restore my inner balance', d:'Recharge your energy with guided Meditations, Practices, and Rituals, hand-picked from your cosmic profile 🪐', s:'your inner balance'},
+ mot:{e:'🚀', t:'Boost motivation & confidence', d:'Tap into empowering Affirmations, Tarot Readings, and Cosmic Forecasts. Unlock hidden sources of confidence 🌞', s:'motivation & confidence'},
+ emo:{e:'🌿', t:'Strengthen emotional well-being', d:'Astrology highlights the emotional patterns shaping your life. Daily Rituals guide you toward resilience and calm 🧘‍♀️', s:'emotional well-being'}
+};
+var GORD=['path','rel','bal','mot','emo'];
+/* "A plan that suits your needs", your own nine lines */
+var PL=['Reveals your True Zodiac Sign','Customised for your Birth Chart','Daily micro-rituals tailored to you','Focused on your Cosmic Purpose','Will deepen your Relationship','Will help you reduce Stress','Will improve your Sleep','Will power-up your Self-Awareness','Will improve your Intuition'];
+/* what Plus leads with, by the first goal picked */
+var PWG={
+ path:{h:'Your Birth Chart, decoded', s:'Your True Zodiac Sign and the path it maps, one micro-ritual a day.', r:[0,1,3], u:'True Sign report'},
+ rel:{h:'Your Soulmate Reading is ready', s:'His traits, your compatibility score and the timing of your meeting, read from your Birth Chart.', r:[4,0,1], u:'Soulmate Reading'},
+ bal:{h:'Your rituals, synced with the Moon', s:'Meditations, practices and rituals hand-picked from your cosmic profile.', r:[5,6,2], u:'Moon-synced routine'},
+ mot:{h:'Your daily card is waiting', s:'Tarot, affirmations and forecasts, read against your Birth Chart.', r:[7,8,2], u:'Daily Tarot'},
+ emo:{h:'Your personal astrologer, 24/7', s:'Ask GUIDE anything. Clear answers rooted in your Birth Chart, in seconds.', r:[5,8,7], u:'chats with GUIDE'}
+};
+var GUIDE={ luna:'Luna', selena:'Selena', nova:'Nova' };
+var MOOD=['Very unpleasant','Unpleasant','Neutral','Pleasant','Very pleasant'];
+var OC=[['#5B7CFF','#3B4FB8','#9FB4FF'],['#8C6BFF','#5C3FC4','#C6B4FF'],['#E59A5C','#9C5BA8','#F5C6A0'],['#F3974D','#D8669A','#FFD3A8'],['#FFB547','#F06A7A','#FFE2A6']];
+var MON=['January','February','March','April','May','June','July','August','September','October','November','December'];
+var MS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function sign(m,d){ var z=[[1,20,'capricorn'],[2,19,'aquarius'],[3,20,'pisces'],[4,20,'aries'],[5,21,'taurus'],[6,21,'gemini'],[7,22,'cancer'],[8,23,'leo'],[9,23,'virgo'],[10,23,'libra'],[11,22,'scorpio'],[12,22,'sagittarius'],[12,31,'capricorn']]; for(var k=0;k<z.length;k++){ if(m<z[k][0]||(m===z[k][0]&&d<=z[k][1])) return z[k][2]; } return 'capricorn'; }
+function cap1(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+var PRICE={ y:'$59.99', ym:'$5.00', m:'$9.99' };
+
+/* the three phones, one per ad */
+var PH=[
+ { id:'soul', ring:'#E86AA0', goal:'rel', guide:'selena', b:{m:3,d:14,y:1996}, mood:2, vid:'ad-soulmate', pill:'Soulmate Reading', mt:'Meta ad',
+   adh:'Your future husband is already written in the stars', adc:'Your birth date knows exactly who he is — his personality, how he’ll make you feel, and when you’ll meet.',
+   wh:'Your future husband is already written in the stars', ws:'Your birth date knows who he is. Your Soulmate Reading shows his traits and when you’ll meet.', art:['ad-soulmate-0','ad-soulmate-3'],
+   rev:['A must-have. What a wonderful experience it is to open it every day and feel more connected to myself and the universe. My birth chart is scarily accurate!','Lina Hoffmann · Santa Fe, USA · moonly.app'],
+   lab:['From your Soulmate Reading ad','Build healthy relationships arrives ticked, Selena guides, and Plus leads with the Soulmate Reading.'] },
+ { id:'astro', ring:'#4A3AE8', goal:'emo', guide:'luna', b:{m:7,d:30,y:1993}, mood:1, vid:'ad-astro', pill:'Personal astrologer', mt:'Meta ad',
+   adh:'Your phone now has a built-in astrologer', adc:'“My ex suddenly texted me after months. Is this a sign?” That’s what a personal astrologer sounds like.',
+   wh:'Your phone now has a built-in astrologer', ws:'Ask Luna anything. Clear answers rooted in your Birth Chart, 24/7.', art:['shot-chat','ad-astro-3'],
+   rev:['There is a chat function you can ask for help/guidance/resources for something you’re struggling with and someone (or AI?) will answer you helpfully and coherently','Megziek · US App Store'],
+   lab:['From your astrologer ad','Emotional well-being arrives ticked, Luna guides, and Plus leads with the astrologer, 24/7.'] },
+ { id:'tarot', ring:'#F3974D', goal:'mot', guide:'nova', b:{m:11,d:2,y:1998}, mood:3, vid:'ad-tarot', pill:'Daily tarot', mt:'Meta ad',
+   adh:'The cards already know what you’re going through', adc:'Love, career, a decision you keep postponing — the cards speak to all of it.',
+   wh:'The cards already know what you’re going through', ws:'Pull your daily card in the morning. Read it against your Birth Chart.', art:['shot-tarot','ad-tarot-2'],
+   rev:['This is my most favorite app ever. It’s got tarot and rune practices, moon phases, and so much more amazing information.','Alex Novak · Brno, Czech Republic · moonly.app'],
+   lab:['From your tarot ad','Motivation & confidence arrives ticked, Nova guides, and Plus leads with the daily card.'] }
+];
+
+var ADS=[
+ { i:0, tag:'META · SINCE 9 OCT 2026', meta:'Facebook and Instagram · running since 9 October 2026 · 31 seconds · at least 13 live ads carry this copy', inad:'A creator runs a famous couple through your Soulmate Reading: the report, the portrait, “When will you meet?”, then your App Store card.', prom:'His traits, your compatibility score and the exact timing of your meeting.', today:'hello.moonly.app: “Trusted by 10M installs”, Editors’ Choice and Download. The same page as every other ad. Then the same quiz start as everyone.', reb:'The first screen repeats the ad’s line, Build healthy relationships is ticked, Selena guides, and Plus opens on “Your Soulmate Reading is ready”.' },
+ { i:1, tag:'META · SINCE 9 OCT 2026', meta:'Facebook and Instagram · running since 9 October 2026 · 10 seconds', inad:'A creator reads her birth chart in Moonly: “my breakup is karmic”. The copy is a chat with your astrologer about an ex who texted.', prom:'A personal astrologer in your pocket.', today:'The same hello.moonly.app page, then the same quiz. On the paywall the astrologer is one of ten feature tiles, far below the fold.', reb:'Opens on “Your phone now has a built-in astrologer”, emotional well-being is ticked, and Plus opens on “Your personal astrologer, 24/7”.' },
+ { i:2, tag:'META · SINCE 14 OCT 2026', meta:'Facebook and Instagram · since 14 October 2026 (the copy since 28 September) · 12 seconds · at least 12 live English ads, also in French, Spanish, Italian and Russian', inad:'“when you finally know how to interpret your tarot spreads correctly”, then your Practice tab and a card’s meaning.', prom:'A card in the morning, a question at midnight.', today:'The same hello.moonly.app page, then the same quiz. Tarot gets one screen in the middle of it, and the paywall headline is the same as everyone’s.', reb:'Opens on the ad’s line, motivation &amp; confidence is ticked, and Plus opens on “Your daily card is waiting”.' }
+];
+
+var IDEAS=[
+ { t:'Name their goal in the Plus headline', p:'Today your web paywall reads “Your Daily Guide to Self-Discovery” for every goal. Here a relationships pick reads “Your Soulmate Reading is ready”, an emotional well-being pick “Your personal astrologer, 24/7” and a motivation pick “Your daily card is waiting”, with their sign and goal in a chip under it.', o:'CR +15–20%', u:'to purchase', st:'pw', hl:'head', kept:'Kept: your PLUS badge, your guide avatars, your plan icons and lines.' },
+ { t:'Open each ad’s install on that ad’s promise', p:'Today the soulmate, astrologer and tarot ads all open the same page, then “Discover your True Zodiac Sign & Destiny”. Here the first screen repeats the ad’s own line, and “What would you like to Transform?” arrives with the matching goal already ticked. They can still change it.', o:'CR +5–15%', u:'to purchase', st:'goal', hl:'adtick', kept:'Kept: your five goals, their wording and your multi-select.' },
+ { t:'Make the loader read their answers back', p:'Today the three bars say “Calculating daily readings”, “Crafting your meditations” and “Matching your affirmations” to everyone. Here the same three bars name their sign, their mood and their goal while they fill.', o:'CR +10–15%', u:'to purchase', st:'load', hl:'ld', kept:'Kept: your orange bars, your percentages and the review under them.' },
+ { t:'Put your proof next to the price', p:'Today 10M users, Editors’ Choice and ELLE · Glamour · Vogue sit early in the quiz, and your web paywall opens on a 90% discount and a ten-minute timer. Here ★ 4.6 from 31K App Store ratings, Editors’ Choice and one real review sit beside the plans.', o:'CR +10–15%', u:'to purchase', st:'pw', hl:'proof', kept:'Kept: your own reviews, quoted as published.' },
+ { t:'Pre-select yearly and show what it saves', p:'$59.99 a year is half of twelve months at $9.99. Yearly is pre-selected with “Save 50%” and “$5.00 a month”, and one docked button names the plan and the price.', o:'ARPU +10–15%', u:'from more yearly plans', st:'pw', hl:'plans', kept:'Kept: your Annual Pro and Monthly prices, nothing invented.' }
+];
+
+var TCAP={
+ today:'<b>Today:</b> your web paywall at moonly.app/start. The same headline for every goal and every ad, opening on a 90% discount and a ten-minute timer.',
+ arrive:'<b>Step 1.</b> Three installs, one from each Meta ad. Tap Download on any phone.',
+ goal:'<b>Step 2. Proposed:</b> your “What would you like to Transform?”, with the ad’s goal already ticked. Change it and watch Plus follow.',
+ att:'<b>Step 3.</b> Tracking asked early, on its own screen, so every install can be tied to the ad that bought it.',
+ mood:'<b>Step 4.</b> Your mood orb, untouched. Your other quiz screens stay where they are; the prototype skips ahead.',
+ birth:'<b>Step 5.</b> A working date wheel. Scroll it and the sign below changes.',
+ load:'<b>Step 6. Proposed:</b> your three loader bars, now naming their sign, mood and goal.',
+ sign:'<b>Step 7.</b> Your True Sign payoff, with the reading their ad promised waiting behind it.',
+ pw:'<b>Step 8. Proposed:</b> Plus answers the goal. Scroll a phone, pick a plan, tap the X: it closes straight into the app.'
+};
+
+var COL=PH.map(function(){ return {}; });
+function initCol(i){ var p=PH[i], c=COL[i]; c.goals=[p.goal]; c.mood=p.mood; c.b={m:p.b.m,d:p.b.d,y:p.b.y}; c.plan='y'; c.ld=0; return c; }
+PH.forEach(function(p,i){ initCol(i); });
+function lead(i){ return COL[i].goals[0]||PH[i].goal; }
+function gName(i){ return GUIDE[PH[i].guide]; }
+function sg(i){ var c=COL[i]; return sign(c.b.m,c.b.d); }
+
+function sb(w){ return '<div class="m-sb'+(w?' w':'')+'"><span>9:41</span><i class="isl"></i><span class="ic"><svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></svg><svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x=".5" y=".5" width="21" height="11" rx="3.5" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="18" height="8" rx="2" fill="currentColor"/></svg></span></div>'; }
+function wm(){ return '<span class="m-wm"><img src="img/crescent.png" alt=""><i></i></span>'; }
+function mtop(back){ return '<div class="m-top">'+(back?'<button class="m-back" data-act="back">'+SV('<path d="M15 18l-6-6 6-6"/>',2.6)+'</button>':'')+wm()+'</div>'; }
+function q(i,h,p){ return '<div class="m-q"><img src="img/'+PH[i].guide+'.png" alt=""><div><h2>'+h+'</h2>'+(p?'<p>'+p+'</p>':'')+'</div></div>'; }
+
+function scrAd(i){
+  var p=PH[i];
+  return '<div class="reel"><video src="img/'+p.vid+'.mp4" autoplay muted loop playsinline poster="img/'+p.vid+'-0.jpg"></video><div class="rshade"></div>'+
+   '<div class="rtop"><span>Reels</span><span>⌕</span></div>'+
+   '<div class="side"><i></i><i></i><i></i></div>'+
+   '<div class="rbot"><div class="acc"><img src="img/icon.png" alt=""><span>Moonly<small>Sponsored</small></span></div><p class="cp">'+p.adc+'</p>'+
+   '<div class="ctab"><span><small>moonly.app</small><b>'+p.adh+'</b></span><button data-act="install">Download</button></div></div></div>'+sb(1);
+}
+function scrWelcome(i){
+  var p=PH[i];
+  return sb()+mtop(0)+'<div class="scr-body m-col"><div class="m-wel">'+
+   '<div class="m-art"><img class="a1" src="img/'+p.art[0]+'.jpg" alt=""><img class="a2" src="img/'+p.art[1]+'.jpg" alt=""><img class="g" src="img/'+p.guide+'.png" alt=""><span class="m-spark" style="left:20px;top:8px">✦</span><span class="m-spark" style="right:22px;top:250px;font-size:16px">✦</span></div>'+
+   '<span class="m-ad" data-hl="hook">▶ From your Meta ad</span>'+
+   '<h1>'+p.wh+'</h1><p>'+p.ws+'</p></div></div>'+
+   '<div class="scr-foot"><button class="m-cta v" data-act="start">Start 2-min quiz →</button><p class="m-fine">96.7% accuracy, rated by real users 🤘</p></div>';
+}
+function scrGoal(i){
+  var c=COL[i], p=PH[i];
+  var o=GORD.map(function(k){ var g=GOALS[k], on=c.goals.indexOf(k)>-1; return '<button class="m-opt'+(on?' on':'')+'" data-act="goal" data-g="'+k+'"'+(k===p.goal?' data-hl="adtick"':'')+'>'+g.e+' '+g.t+'<small>'+g.d+'</small></button>'; }).join('');
+  return sb()+mtop(1)+'<div class="scr-body">'+q(i,'What would you like to Transform?','We’ve handpicked timeless practices from 200+ top world’s Masters 🙏')+
+   '<span class="m-ad">▶ Ticked from your '+p.pill.toLowerCase()+' ad</span><div class="m-opts">'+o+'</div></div>'+
+   '<div class="scr-foot"><button class="m-cta" data-act="goalnext"'+(c.goals.length?'':' disabled')+'>Continue →</button></div>';
+}
+function scrAtt(i,sys){
+  return sb()+mtop(1)+'<div class="scr-body m-col"><div class="m-att"><div class="ring"><img src="img/'+PH[i].guide+'.png" alt=""></div>'+
+   '<h2>One quick thing from iOS</h2><p>Tap Allow on the next screen so we know which of our ads brought you here. Your birth data and chats stay private either way.</p></div></div>'+
+   '<div class="scr-foot"><button class="m-cta" data-act="attnext">Continue →</button></div>'+
+   (sys?'<div class="sys"><div class="sys-in"><img src="img/icon.png" alt=""><h5>Allow “Moonly” to track your activity across other companies’ apps and websites?</h5><p>This tells Moonly which ad you came from.</p><button data-act="attno">Ask App Not to Track</button><button data-act="attok">Allow</button></div></div>':'');
+}
+function scrMood(i){
+  var c=COL[i], o=OC[c.mood];
+  return sb()+mtop(1)+'<div class="scr-body">'+q(i,'How are you feeling right now?','')+
+   '<div class="m-orb" style="--oc1:'+o[0]+';--oc2:'+o[1]+';--oc3:'+o[2]+'"><i class="o1"></i><i class="o2"></i><i class="o3"></i></div>'+
+   '<div class="m-mood">'+MOOD[c.mood]+'</div>'+
+   '<div class="m-sl">'+MOOD.map(function(x,k){ return '<button data-act="mood" data-k="'+k+'" aria-label="'+x+'"'+(k===c.mood?' class="on"':'')+'></button>'; }).join('')+'</div>'+
+   '<div class="m-sll"><span>Unpleasant</span><span>Pleasant</span></div></div>'+
+   '<div class="scr-foot"><button class="m-cta" data-act="moodnext">Continue →</button></div>';
+}
+function wcol(cls,arr,sel,key){ return '<div class="m-wc '+cls+'" data-wk="'+key+'"><div class="sp"></div>'+arr.map(function(v){ return '<div>'+v+'</div>'; }).join('')+'<div class="sp"></div></div>'; }
+var YRS=[]; for(var yy=1950;yy<=2010;yy++) YRS.push(yy);
+var DYS=[]; for(var dd=1;dd<=31;dd++) DYS.push(dd);
+function zsHTML(i){ var c=COL[i], s=sg(i); return '<img src="img/z-'+s+'.png" alt=""><span><b>Western sign: '+cap1(s)+'</b><small>'+MS[c.b.m-1]+' '+c.b.d+', '+c.b.y+' · your Vedic sign comes next</small></span>'; }
+function scrBirth(i){
+  return sb()+mtop(1)+'<div class="scr-body">'+q(i,'What’s your Birthdate?','')+
+   '<div class="m-wheel"><i class="hl"></i>'+wcol('mo',MON,0,'m')+wcol('d',DYS,0,'d')+wcol('y',YRS,0,'y')+'</div>'+
+   '<div class="m-zs" data-zs>'+zsHTML(i)+'</div>'+
+   '<div class="m-why"><b>Why do we need this?</b><p>To map your Birth Chart, unique cosmic blueprint — the key to understanding your life’s patterns and purposes</p></div></div>'+
+   '<div class="scr-foot"><button class="m-cta" data-act="birthnext">Continue →</button></div>';
+}
+function loadLines(i){
+  var c=COL[i];
+  return [ 'Calculating daily readings for <b>'+cap1(sg(i))+'</b>', 'Crafting meditations for a <b>'+MOOD[c.mood].toLowerCase()+'</b> day', 'Matching affirmations to <b>'+GOALS[lead(i)].s+'</b>' ];
+}
+function scrLoad(i){
+  var c=COL[i], ln=loadLines(i), n=c.ld||0;
+  return sb()+mtop(0)+'<div class="scr-body">'+q(i,'Personalizing your experience...','')+
+   '<div class="m-ld" data-hl="ld">'+ln.map(function(t,k){ var w=k<n?100:(k===n?40:0); return '<div class="r'+(k>n?' dim':'')+'"><div class="t"><span>'+t+'</span><span>'+w+'%</span></div><div class="bar"><i style="width:'+w+'%"></i></div></div>'; }).join('')+'</div>'+
+   '<div class="m-sun"><i style="width:200px;height:200px"></i><i style="width:150px;height:150px"></i><img src="img/plus-circle.png" alt=""></div>'+
+   '<div class="m-rv"><span class="av">W</span><div><span class="st">★★★★★</span><p>The most reliable astrological app. It’s the only one I come back to daily. It helped me make sense of myself and feel steadier</p><small>Wang Yuchen 🇺🇸</small></div></div></div>';
+}
+function scrSign(i){
+  var c=COL[i], s=sg(i), p=PWG[lead(i)];
+  var west=s==='pisces'?'<img src="img/west-pisces.jpg" alt="">':'<img class="z" src="img/z-'+s+'.png" alt="">';
+  return sb()+mtop(1)+'<div class="scr-body m-ts"><h1>Discover your True Sign</h1><p>In Western Astrology, your zodiac sign is '+cap1(s)+'. But your true Vedic sign is different. It unlocks clearer patterns in love and career.</p>'+
+   '<div class="m-cards"><div class="c c1">'+west+'</div><div class="c c2"><img src="img/vedic.jpg" alt=""></div><span class="lb lb1">Your Western Sign</span><span class="lb lb2">Your Vedic Sign</span></div>'+
+   '<div class="m-date"><img src="img/z-'+s+'.png" alt=""><b>'+MS[c.b.m-1]+' '+c.b.d+', '+c.b.y+'</b></div>'+
+   '<div class="m-unl" data-hl="unl"><b>Waiting behind your Vedic sign</b><span>'+cap1(p.u.replace('GUIDE',gName(i)))+' · for '+GOALS[lead(i)].s+'</span></div></div>'+
+   '<div class="scr-foot"><button class="m-cta" data-act="signnext">I’m enchanted!</button></div>';
+}
+function scrPW(i){
+  var c=COL[i], g=PWG[lead(i)], y=c.plan==='y', s=sg(i), p=PH[i];
+  var rows=g.r.map(function(k){ return '<div><img src="img/pl'+k+'.png" alt=""><span>'+PL[k]+'</span></div>'; }).join('');
+  return sb()+'<div class="m-top"><button class="m-x" data-act="x" aria-label="Close">'+SV('<path d="M18 6 6 18M6 6l12 12"/>',2.6)+'</button>'+wm()+'</div>'+
+   '<div class="scr-body">'+
+   '<div class="m-pwh"><div class="bd">'+wm()+'<span class="plus">PLUS</span></div><img class="gv" src="img/'+p.guide+'.png" alt="">'+
+   '<h1 data-hl="head">'+g.h+'</h1><p>'+g.s.replace('GUIDE',gName(i))+'</p>'+
+   '<span class="m-chip">For <b>'+GOALS[lead(i)].s+'</b> · '+cap1(s)+'</span></div>'+
+   '<div class="m-proof" data-hl="proof"><span class="st">★★★★★</span><span>4.6 · 31K App Store ratings</span><span class="ec"> Editors’ Choice</span></div>'+
+   '<div class="m-teas"><div class="vz"><img src="img/vedic.jpg" alt=""></div><div><b>Your Vedic sign</b><span>Behind it: your '+g.u.replace('GUIDE',gName(i))+', for '+GOALS[lead(i)].s+'.</span><em>🔒 Unlocks with Plus</em></div></div>'+
+   '<div class="m-plan-l"><h4>A plan that suits your needs</h4>'+rows+'</div><button class="m-all" data-act="all">See all 9 ›</button>'+
+   '<div class="m-plans" data-hl="plans">'+
+    '<button class="m-plan'+(y?' on':'')+'" data-act="plan" data-p="y"><span class="tg">SAVE 50%</span><div class="rw"><b>Yearly</b><span class="pp">'+PRICE.y+' / year</span></div><small>'+PRICE.ym+' a month · billed once a year</small></button>'+
+    '<button class="m-plan'+(!y?' on':'')+'" data-act="plan" data-p="m"><div class="rw"><b>Monthly</b><span class="pp">'+PRICE.m+' / month</span></div><small>Billed every month</small></button></div>'+
+   '<div class="m-rev"><span class="st">★★★★★</span><p>“'+p.rev[0]+'”</p><small>'+p.rev[1]+'</small></div>'+
+   '<div class="m-legal">Payment is charged to your Apple Account. Moonly Plus renews automatically unless cancelled at least 24 hours before the end of the period. Manage or cancel in your Apple Account settings.<br><a>Terms of Use</a> · <a>Privacy Policy</a> · <a>Restore</a></div></div>'+
+   '<div class="scr-foot m-sep"><button class="m-cta v" data-act="buy" style="text-transform:none">'+(y?'Continue · '+PRICE.y+' / year':'Continue · '+PRICE.m+' / month')+'</button><p class="m-fine">Auto-renews. Cancel any time in your Apple Account.</p></div>';
+}
+function scrToday(i){
+  var rep=[['Personality traits','You carry a rare balance of depth and restlessness — a constant pull between intuition and logic…'],['Your superpowers','Your energy field holds a gift of transformation — you shift the emotions of others without speaking…'],['Your destiny','Your life isn’t random — it unfolds through repeating cycles…']];
+  return sb()+'<div class="t-bar"><span><small>90% discount reserved for:</small><b>9:58</b></span><button data-act="tbuy">Get my plan</button></div>'+
+   '<div class="scr-body" style="padding:0 14px 14px">'+
+   '<div class="t-hero"><div style="display:flex;justify-content:space-between;align-items:flex-start"><span class="bd" style="display:flex;gap:6px;align-items:center">'+wm()+'<span class="plus" style="height:20px;padding:0 7px;border-radius:6px;background:linear-gradient(90deg,#F7B062,#E98C3E);color:#3A1C04;font-size:10.5px;font-weight:800;display:inline-flex;align-items:center">PLUS</span></span><img src="img/luna.png" alt="" style="width:54px;height:54px;border-radius:50%"></div>'+
+   '<h1>Your Daily Guide to Self-Discovery</h1><p>Find clarity, align with your inner cycles, cosmic blueprint, and navigate your destiny</p></div>'+
+   '<img class="t-img" src="img/today-with.jpg" alt="">'+
+   rep.map(function(r){ return '<div class="t-rep"><b>'+r[0]+'</b><p>'+r[1]+'</p><span>🔒 Unlock Report</span></div>'; }).join('')+
+   '<div class="m-plan-l" style="margin-top:10px"><h4>A plan that suits your needs</h4>'+PL.slice(0,5).map(function(t,k){ return '<div><img src="img/pl'+k+'.png" alt=""><span>'+t+'</span></div>'; }).join('')+'</div>'+
+   '<div class="cap-today">Your web paywall at moonly.app/start, 16 November 2026.<br>The same headline for every goal and every ad.</div></div>'+
+   '<div class="t-foot"><h4>Your personal plan is ready!</h4><button class="rb" data-act="tbuy"><span><b>Redeem my Discount</b><small><s>$49.99</s> → $4.99</small></span><em><b>$4.99</b><small>paid trial</small></em></button><div class="ok">90% discount applied</div><div class="pay"><i>Apple Pay</i><i>G Pay</i><i>VISA</i><i>MC</i><i>AMEX</i></div><div class="gu">✅ 30-day money-back guarantee</div></div>';
+}
+function scrHome(i){
+  var d=['Sun 15','Mon 16','Tue 17','Wed 18','Thu 19'];
+  return sb()+'<div class="scr-body" style="padding-top:4px">'+
+   '<div class="h-wk">'+d.map(function(x,k){ var a=x.split(' '); return '<div'+(k===1?' class="on"':'')+'>'+a[0].toUpperCase()+'<i></i><b>'+a[1]+'</b></div>'; }).join('')+'</div>'+
+   '<div class="h-card c1"><small>For you</small><b>Daily Horoscope</b><small style="margin-top:20px">Focus on</small><p style="margin-top:4px">The energy between you and the person on your mind is shifting. Notice it.</p><small style="margin-top:14px">Love is in the air</small><b>Romance</b></div>'+
+   '<div class="h-card c2"><small>Lunar calendar</small><b>Waxing Moon</b><p>Energy flows outward — dreams find shape, efforts gain power</p></div></div>'+
+   '<div class="h-tab"><div class="on">'+SV('<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>')+'Today</div><div>'+SV('<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M12 8l1.2 2.6 2.8.3-2.1 1.9.6 2.8-2.5-1.5-2.5 1.5.6-2.8-2.1-1.9 2.8-.3z"/>')+'Practice</div><div>'+SV('<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>')+'Astrologer</div><div>'+SV('<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>')+'Profile</div></div>';
+}
+
+function stepScr(st,i){ if(st==='arrive') return 'ad'; return st; }
+function phoneHTML(i){
+  var s=COL[i].scr, inner;
+  if(s==='ad') inner=scrAd(i); else if(s==='welcome') inner=scrWelcome(i); else if(s==='goal') inner=scrGoal(i);
+  else if(s==='att') inner=scrAtt(i,0); else if(s==='attsys') inner=scrAtt(i,1); else if(s==='mood') inner=scrMood(i);
+  else if(s==='birth') inner=scrBirth(i); else if(s==='load') inner=scrLoad(i); else if(s==='sign') inner=scrSign(i);
+  else if(s==='today') inner=scrToday(i); else if(s==='home') inner=scrHome(i); else inner=scrPW(i);
+  return '<div class="phone'+(G.theme==='light'?' lt':'')+'"><section class="scr" data-s="'+s+'">'+inner+'<div class="m-toast"></div></section></div>';
+}
+var IH=36;
+function wireWheel(i,box){
+  var c=COL[i];
+  $$('.m-wc',box).forEach(function(w){
+    var k=w.dataset.wk, idx=k==='m'?c.b.m-1:k==='d'?c.b.d-1:c.b.y-YRS[0];
+    w.scrollTop=idx*IH; paintWheel(w);
+    var t; w.addEventListener('scroll',function(){ paintWheel(w); clearTimeout(t); t=setTimeout(function(){
+      var n=Math.round(w.scrollTop/IH);
+      if(k==='m') c.b.m=Math.min(12,Math.max(1,n+1)); else if(k==='d') c.b.d=Math.min(31,Math.max(1,n+1)); else c.b.y=YRS[Math.min(YRS.length-1,Math.max(0,n))];
+      var dim=new Date(c.b.y,c.b.m,0).getDate(); if(c.b.d>dim) c.b.d=dim;
+      var z=$('[data-zs]',box); if(z) z.innerHTML=zsHTML(i);
+    },90); },{passive:true});
+  });
+}
+function paintWheel(w){ var n=w.scrollTop/IH; $$('div:not(.sp)',w).forEach(function(d,j){ var dist=Math.abs(j-n); d.style.opacity=Math.max(.18,1-dist*.32); }); }
+function drawCol(i,keep){
+  var box=$('#trio .tcol[data-i="'+i+'"] .pbox'); if(!box) return;
+  var ph=box.querySelector('.phone'), b=box.querySelector('.scr-body'), y=b?b.scrollTop:0;
+  var tmp=document.createElement('div'); tmp.innerHTML=phoneHTML(i);
+  if(ph) box.replaceChild(tmp.firstChild,ph); else box.insertBefore(tmp.firstChild,box.firstChild);
+  if(keep){ var nb=box.querySelector('.scr-body'); if(nb) nb.scrollTop=y; }
+  if(COL[i].scr==='birth') wireWheel(i,box);
+  if(COL[i].scr==='load') runLoad(i);
+}
+function go(i,s){ var c=COL[i]; clearTimeout(c.lt); c.scr=s; if(s==='load') c.ld=0; drawCol(i); }
+function runLoad(i){
+  var c=COL[i], n=3, k=walk.on?0.5:1;
+  clearTimeout(c.lt);
+  c.lt=setTimeout(function step(){
+    if(c.scr!=='load') return;
+    if(c.ld<n){ c.ld++; var box=$('#trio .tcol[data-i="'+i+'"]');
+      $$('.m-ld .r',box).forEach(function(r,j){ var w=j<c.ld?100:(j===c.ld?40:0); r.classList.toggle('dim',j>c.ld); $('.bar i',r).style.width=w+'%'; $('.t span:last-child',r).textContent=w+'%'; });
+      c.lt=setTimeout(step,700*k); }
+    else { c.lt=setTimeout(function(){ if(c.scr==='load') go(i,'sign'); },600*k); }
+  },450*k);
+}
+function pillText(i){ return PH[i].pill+' · '+GOALS[lead(i)].t; }
+function renderTrio(){
+  $('#trio').innerHTML=PH.map(function(p,i){
+    return '<div class="tcol" data-i="'+i+'" style="--ring:'+p.ring+'"><div class="apill"><span class="mt">'+p.mt+'</span><span class="tx">'+pillText(i)+'</span></div><div class="pbox"><i class="finger"></i></div><div class="tlab"><b>'+p.lab[0]+'</b><span>'+p.lab[1]+'</span></div></div>';
+  }).join('');
+  PH.forEach(function(p,i){ drawCol(i); });
+}
+function paintSteps(){ $$('#steps button').forEach(function(b){ b.classList.toggle('on',b.dataset.st===G.step); }); $('#stcap').innerHTML=TCAP[G.step]||''; $$('#trio .tcol').forEach(function(t){ t.classList.toggle('ring',G.step!=='today'); }); }
+function setStep(st){ G.step=st; PH.forEach(function(p,i){ initCol(i); COL[i].scr=stepScr(st,i); }); paintSteps(); PH.forEach(function(p,i){ clearTimeout(COL[i].lt); drawCol(i); var t=$('#trio .tcol[data-i="'+i+'"] .apill .tx'); if(t) t.textContent=pillText(i); }); }
+function toast(i,m){ var e=$('#trio .tcol[data-i="'+i+'"] .m-toast'); if(!e) return; e.textContent=m; e.classList.add('show'); clearTimeout(e._t); e._t=setTimeout(function(){ e.classList.remove('show'); },1900); }
+var BACK={goal:'welcome',att:'goal',attsys:'att',mood:'att',birth:'mood',sign:'birth'};
+
+/* taps inside a phone change only that phone */
+document.addEventListener('click',function(e){
+  var t=e.target.closest('[data-act]'); if(!t) return; var col=t.closest('.tcol'); if(!col) return;
+  var i=+col.dataset.i, c=COL[i], a=t.dataset.act;
+  if(a==='install') go(i,'welcome');
+  else if(a==='start') go(i,'goal');
+  else if(a==='back'){ if(BACK[c.scr]) go(i,BACK[c.scr]); }
+  else if(a==='goal'){ var k=t.dataset.g, j=c.goals.indexOf(k); if(j>-1) c.goals.splice(j,1); else c.goals.push(k); drawCol(i,true); $('.apill .tx',col).textContent=pillText(i); }
+  else if(a==='goalnext'){ if(c.goals.length) go(i,'att'); }
+  else if(a==='attnext') go(i,'attsys');
+  else if(a==='attok'||a==='attno') go(i,'mood');
+  else if(a==='mood'){ c.mood=+t.dataset.k; drawCol(i,true); }
+  else if(a==='moodnext') go(i,'birth');
+  else if(a==='birthnext') go(i,'load');
+  else if(a==='signnext') go(i,'pw');
+  else if(a==='plan'){ c.plan=t.dataset.p; drawCol(i,true); }
+  else if(a==='all') toast(i,'Your full list of nine opens here');
+  else if(a==='buy') toast(i,'Apple’s purchase sheet opens here');
+  else if(a==='tbuy') toast(i,'Today this opens your web checkout');
+  else if(a==='x'){ go(i,'home'); toast(i,'Closed straight into the app. No second paywall.'); }
+});
+
+function fit(){ var w=document.documentElement.clientWidth||innerWidth; if(w<300) w=Math.max(w,(screen&&screen.width)||390,320); var sc=w>=1240?0.8:w>=900?(w-160)/(3*390):(w-48)/390; sc=Math.min(0.8,Math.max(0.42,sc)); $('#trio').style.setProperty('--sc',sc.toFixed(3)); }
+
+/* ---- ad cards, idea cards and list ---- */
+$('#adcards').innerHTML=ADS.map(function(a){ var p=PH[a.i]; return '<div class="lib"><div><div class="vid"><video src="img/'+p.vid+'.mp4" autoplay muted loop playsinline poster="img/'+p.vid+'-0.jpg"></video><span class="tag">'+a.tag+'</span></div><div class="strip">'+[1,2,3,4].map(function(k){ return '<img src="img/'+p.vid+'-'+k+'.jpg" alt="">'; }).join('')+'</div></div>'+
+  '<div class="adb"><div class="hook">“'+p.adh+'”<small>'+p.adc+'</small></div><div class="meta">'+a.meta+'</div><dl><dt>In the ad</dt><dd>'+a.inad+'</dd><dt>The promise</dt><dd>'+a.prom+'</dd><dt>Today it lands on</dt><dd>'+a.today+'</dd><dt>In the rebuild</dt><dd>'+a.reb+'</dd></dl><div class="go"><button data-adgo="'+a.i+'">Open its flow</button></div></div></div>'; }).join('');
+function ideaRow(d){ return '<div class="row"><span class="out">'+d.o+' <small>'+d.u+'</small></span><span class="see">See it on the phones →</span></div>'; }
+$('#ideas').innerHTML=IDEAS.map(function(d,i){ return '<div class="idea" data-idea="'+i+'"><div class="n">Idea '+(i+1)+' of 5</div><h3>'+d.t+'</h3><p>'+d.p+'</p>'+ideaRow(d)+'<div class="kept">'+d.kept+'</div></div>'; }).join('');
+$('#list').innerHTML=IDEAS.map(function(d,i){ return '<div class="it" data-idea="'+i+'"><div class="em">0'+(i+1)+'</div><div><h3>'+d.t+'</h3><p>'+d.p+'</p>'+ideaRow(d)+'</div></div>'; }).join('');
+function showIdea(n){
+  var d=IDEAS[n]; stopWalk(); showView('pw'); setStep(d.st);
+  setTimeout(function(){
+    $('#trio').scrollIntoView({behavior:'smooth',block:'start'});
+    $$('#trio [data-hl="'+d.hl+'"]').forEach(function(el){
+      var b=el.closest('.scr-body'); if(b) b.scrollTop=Math.max(0,el.offsetTop-140);
+      el.classList.remove('pulse'); void el.offsetWidth; el.classList.add('pulse');
+    });
+  },80);
+}
+document.addEventListener('click',function(e){ var c=e.target.closest('[data-idea]'); if(c) showIdea(+c.dataset.idea); });
+document.addEventListener('click',function(e){ var b=e.target.closest('[data-adgo]'); if(!b) return; var k=+b.dataset.adgo; stopWalk(); showView('pw'); setStep('arrive');
+  setTimeout(function(){ var col=$('#trio .tcol[data-i="'+k+'"]'); col.scrollIntoView({behavior:'smooth',block:'center',inline:'center'}); var ph=col.querySelector('.phone'); ph.classList.remove('pulse'); void ph.offsetWidth; ph.classList.add('pulse'); },80); });
+
+/* ---- views ---- */
+function showView(v){ $$('.view').forEach(function(x){ x.classList.remove('on'); }); $('#view-'+v).classList.add('on'); $$('.tabs button').forEach(function(b){ b.classList.toggle('on',b.dataset.v===v); });
+  if(v!=='pw') stopWalk();
+  var q=new URLSearchParams(location.search); q.delete('open'); if(v==='pw') q.set('view','proto'); else q.delete('view'); history.replaceState(null,'',location.pathname+(q.toString()?'?'+q:'')); scrollTo(0,0); fit();
+  if(v==='pw') PH.forEach(function(p,i){ if(COL[i].scr==='birth') drawCol(i); }); }
+$$('.tabs button').forEach(function(b){ b.addEventListener('click',function(){ showView(b.dataset.v); }); });
+$$('[data-open]').forEach(function(b){ b.addEventListener('click',function(){ showView(b.dataset.open); }); });
+$$('#steps button').forEach(function(b){ b.addEventListener('click',function(){ stopWalk(); setStep(b.dataset.st); }); });
+$$('#theme button').forEach(function(b){ b.addEventListener('click',function(){ G.theme=b.dataset.th; $$('#theme button').forEach(function(x){ x.classList.toggle('on',x===b); }); $$('#trio .phone').forEach(function(p){ p.classList.toggle('lt',G.theme==='light'); }); }); });
+
+/* ---- the 30-second walkthrough: drives the real phones ---- */
+var walk={on:false,tok:0};
+function wait(ms,tk){ return new Promise(function(res,rej){ setTimeout(function(){ tk===walk.tok?res():rej('stop'); },ms); }); }
+function capt(t,p){ $('#dtx').textContent=t; $('#dpr').style.width=p+'%'; }
+async function tap(i,sel,tk){
+  var col=$('#trio .tcol[data-i="'+i+'"]'), box=$('.pbox',col), el=$(sel,box), f=$('.finger',box); if(!el) return;
+  var b=box.getBoundingClientRect(), r=el.getBoundingClientRect();
+  f.classList.add('on'); f.style.left=(r.left-b.left+r.width/2)+'px'; f.style.top=(r.top-b.top+r.height/2)+'px';
+  await wait(360,tk); f.classList.add('press'); await wait(110,tk); f.classList.remove('press'); el.click(); await wait(150,tk);
+}
+function others(s){ PH.forEach(function(p,i){ if(i!==1) go(i,s); }); }
+async function scrollTo2(i,sel,tk){ var box=$('#trio .tcol[data-i="'+i+'"] .pbox'), b=$('.scr-body',box), el=$(sel,box); if(!b||!el) return; var to=Math.max(0,el.offsetTop-90), fr=b.scrollTop, t0=performance.now(); while(true){ var k=Math.min(1,(performance.now()-t0)/600); b.scrollTop=fr+(to-fr)*(1-Math.pow(1-k,3)); if(k>=1) break; await wait(16,tk); } }
+async function wheelTo(i,key,to,tk){ var w=$('#trio .tcol[data-i="'+i+'"] .m-wc[data-wk="'+key+'"]'); if(!w) return; var fr=w.scrollTop, t0=performance.now(); while(true){ var k=Math.min(1,(performance.now()-t0)/700); w.scrollTop=fr+(to-fr)*(1-Math.pow(1-k,3)); if(k>=1) break; await wait(16,tk); } }
+async function startWalk(){
+  stopWalk(); var tk=++walk.tok; walk.on=true; showView('pw'); $('#dcap').classList.add('on'); $('#wt').classList.add('on'); $('#wt').textContent='■ Stop walkthrough';
+  var t0=performance.now();
+  try{
+    setStep('arrive'); $('#trio').scrollIntoView({behavior:'smooth',block:'center'});
+    capt('Three installs, one from each of your Meta ads.',5); await wait(1600,tk);
+    await tap(1,'[data-act=install]',tk); others('welcome');
+    capt('Each first screen repeats its own ad’s line.',14); await wait(1300,tk);
+    await tap(1,'[data-act=start]',tk); others('goal');
+    capt('“What would you like to Transform?”, with the ad’s goal already ticked.',24); await wait(1300,tk);
+    await tap(1,'[data-act=goalnext]',tk); others('att');
+    capt('Tracking asked early, on its own screen.',33); await wait(600,tk);
+    await tap(1,'[data-act=attnext]',tk); others('attsys'); await wait(350,tk);
+    await tap(1,'[data-act=attok]',tk); others('mood');
+    capt('Your mood orb, untouched. It feeds the loader.',42); await wait(400,tk);
+    await tap(1,'[data-act=mood][data-k="3"]',tk); await wait(500,tk);
+    await tap(1,'[data-act=moodnext]',tk); others('birth');
+    capt('A working date wheel: the sign follows the date.',52); await wait(300,tk);
+    await wheelTo(1,'m',4*IH,tk); await wait(600,tk);
+    await tap(1,'[data-act=birthnext]',tk); others('load');
+    capt('Your loader bars now name their sign, mood and goal.',62); await wait(3200,tk);
+    PH.forEach(function(p,i){ if(COL[i].scr!=='sign') go(i,'sign'); });
+    capt('Your True Sign payoff, with their reading waiting behind it.',72); await wait(1300,tk);
+    await tap(1,'[data-act=signnext]',tk); others('pw');
+    capt('Plus answers the goal: the headline, the chip and the plan lines.',82); await wait(1700,tk);
+    await Promise.all(PH.map(function(p,i){ return scrollTo2(i,'[data-hl=plans]',tk); }));
+    capt('Yearly pre-selected, Save 50%, one button with the price.',90); await wait(500,tk);
+    await tap(1,'[data-p=m]',tk); await wait(400,tk); await tap(1,'[data-p=y]',tk); await wait(700,tk);
+    capt('The X goes straight into the app. No second paywall.',97); await tap(1,'[data-act=x]',tk); await wait(1600,tk);
+    capt('That’s the flow. Tap any phone to try it yourself.',100); console.log('walkthrough ms',Math.round(performance.now()-t0));
+    await wait(1400,tk); stopWalk(); setStep('pw');
+  }catch(e){}
+}
+function stopWalk(){ if(!walk.on) return; walk.on=false; walk.tok++; $('#dcap').classList.remove('on'); $('#wt').classList.remove('on'); $('#wt').textContent='▶ 30-second walkthrough'; $$('.finger').forEach(function(f){ f.classList.remove('on'); }); }
+$$('[data-walk]').forEach(function(b){ b.addEventListener('click',function(){ if(walk.on&&b.id==='wt'){ stopWalk(); return; } startWalk(); }); });
+document.addEventListener('pointerdown',function(e){ if(!walk.on||!e.isTrusted) return; if(e.target.closest('#wt')) return; if(e.target.closest('#trio,#steps,#theme,.tabs,.nav')) stopWalk(); },true);
+
+/* hero: stars, the zodiac rising, the Moon moving through its phases */
+(function(){ var h=''; for(var k=0;k<70;k++){ h+='<i style="left:'+((k*37.3)%100).toFixed(1)+'%;top:'+((k*53.7)%100).toFixed(1)+'%;animation-delay:-'+((k*0.73)%4).toFixed(2)+'s;'+(k%7===0?'width:3px;height:3px;':'')+'"></i>'; } $('#stars').innerHTML=h;
+  var gl='♈♉♊♋♌♍♎♏♐♑♒♓'.split(''), g=''; gl.forEach(function(t,k){ g+='<span style="left:'+(4+k*8)+'%;animation-duration:'+(22+(k*5)%14)+'s;animation-delay:-'+((k*4.3)%22).toFixed(1)+'s">'+t+'︎</span>'; }); $('#glyphs').innerHTML=g; })();
+
+PH.forEach(function(p,i){ COL[i].scr=stepScr(G.step,i); });
+renderTrio(); fit(); paintSteps(); addEventListener('resize',fit); addEventListener('load',fit); addEventListener('pageshow',fit); if(window.ResizeObserver) new ResizeObserver(fit).observe(document.documentElement);
+(function(){ var q=new URLSearchParams(location.search); if(q.get('view')==='proto'||q.get('open')==='proto') showView('pw'); if(q.get('step')) setStep(q.get('step')); })();
+</script>
+<script>
+/* GitHub Pages lets browsers keep this page for 10 minutes; if a newer build is live, reload onto it */
+var BUILD='m1';
+fetch(location.pathname+'?cb='+Date.now(),{cache:'no-store'}).then(function(r){ return r.text(); }).then(function(h){
+  var m=h.match(/var BUILD='([^']+)'/); if(m && m[1]!==BUILD){ var q=new URLSearchParams(location.search); q.set('v',m[1]); location.replace(location.pathname+'?'+q.toString()); }
+}).catch(function(){});
+</script>
+</body>
+</html>
